@@ -1,95 +1,733 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenil Grupo Inmobiliario</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        header {
-            background: #004080;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-        }
-        section {
-            padding: 20px;
-            margin: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            background: #004080;
-            color: white;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenil Grupo | Portal y CRM Inmobiliario</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0b0b0d;
+      --bg-card: #141418;
+      --bg-elevated: #1c1c22;
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.16);
+      --gold-border: rgba(212, 175, 55, 0.35);
+      --text-main: #ffffff;
+      --text-muted: #b3b3bd;
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(90deg, #0b0b0d 0%, #161512 100%);
+      border-bottom: 1px solid var(--gold-border);
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      height: 46px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 4px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.4px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--gold);
+    }
+
+    .tab-btn.active {
+      background: var(--gold);
+      color: #0b0b0d;
+      border-color: var(--gold);
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 24px auto;
+      padding: 0 20px 48px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-gold {
+      border-color: var(--gold-border);
+    }
+
+    h1, h2, h3 {
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn {
+      background: var(--gold);
+      color: #0b0b0d;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .kpi-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status-msg {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-top: 8px;
+      background: var(--gold-soft);
+      border: 1px solid var(--gold-border);
+      color: var(--text-main);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .item-row {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--gold-border);
+      margin-left: 8px;
+    }
+
+    .history-list {
+      margin-top: 8px;
+      padding-left: 16px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Zenil Grupo Inmobiliario</h1>
-        <nav>
-            <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#propiedades">Propiedades</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-                <li><a href="#nosotros">Nosotros</a></li>
-                <li><a href="#contacto">Contacto</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <section id="inicio">
-        <h2>Bienvenido a Zenil Grupo Inmobiliario</h2>
-        <p>Soluciones completas con innovación y confianza.</p>
+  <header>
+    <div class="brand-box">
+      <img id="headerLogo" src="./logo-zenilg.png" alt="Logotipo Zenil Grupo" class="brand-logo" />
+      <div>
+        <div class="brand-title">ZENIL GRUPO</div>
+        <div class="brand-subtitle">Zenil Realty · Zenil Soluciones · Avzen Comercializadora</div>
+      </div>
+    </div>
+    <nav>
+      <button class="tab-btn active" data-tab="portal" onclick="switchTab('portal')">Portal Propietarios / Inquilinos</button>
+      <button class="tab-btn" data-tab="crm-rentas" onclick="switchTab('crm-rentas')">CRM Rentas</button>
+      <button class="tab-btn" data-tab="ventas" onclick="switchTab('ventas')">Módulo Ventas</button>
+      <button class="tab-btn" data-tab="seguridad" onclick="switchTab('seguridad')">Seguridad y OTP</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- PESTAÑA 1: PORTAL PROPIETARIOS E INQUILINOS -->
+    <section id="tab-portal" class="tab-section">
+      <div class="card card-gold">
+        <h1>Acceso Seguro para Propietarios e Inquilinos</h1>
+        <p>Consulta el estatus de tu propiedad, movimientos y demanda de prospectos sin exponer datos personales de terceros.</p>
+
+        <div id="portalLoginBox" class="grid-2">
+          <div>
+            <label for="portalEmail">Correo registrado</label>
+            <input type="email" id="portalEmail" placeholder="propietario@correo.com" />
+
+            <label for="portalSecret">Clave de acceso</label>
+            <input type="password" id="portalSecret" placeholder="Ingresa tu clave" />
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn" onclick="requestOtp('portal')">Enviar código OTP</button>
+              <button class="btn btn-secondary" onclick="verifyPortalAccess()">Entrar con código</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="portalOtpInput">Código OTP de verificación (6 dígitos)</label>
+            <input type="text" id="portalOtpInput" maxlength="6" placeholder="123456" />
+
+            <label for="portalPropertySelect">Propiedad asignada</label>
+            <select id="portalPropertySelect">
+              <option value="ZR-001">ZR-001 · Casa Renta · Planta Baja y 1er Nivel</option>
+              <option value="ZR-002">ZR-002 · Departamento Renta · 1er Nivel</option>
+              <option value="ZR-003">ZR-003 · Local Comercial · Planta Baja</option>
+            </select>
+
+            <div id="portalStatus" class="status-msg hidden"></div>
+          </div>
+        </div>
+
+        <div id="portalDashboard" class="hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <div>
+              <h2 id="portalPropTitle">Propiedad</h2>
+              <p id="portalUserSummary" style="margin-bottom: 0;"></p>
+            </div>
+            <button class="btn btn-secondary" onclick="logoutPortal()">Cerrar sesión segura</button>
+          </div>
+
+          <div class="grid-3" style="margin-bottom: 18px;">
+            <div class="kpi-box">
+              <div class="kpi-value" id="kpiProspectsWeek">0</div>
+              <div class="kpi-label">Prospectos esta semana (solo conteo)</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-value" id="kpiProspectsMonth">0</div>
+              <div class="kpi-label">Prospectos este mes (solo conteo)</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-value" id="kpiRentStatus">Disponible</div>
+              <div class="kpi-label">Estatus operativo de la unidad</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 0;">
+            <h3>Resumen de Actividad de la Propiedad</h3>
+            <p id="portalActivityText">Sin datos personales de prospectos visibles por política de privacidad de Zenil Grupo.</p>
+          </div>
+        </div>
+      </div>
     </section>
-    
-    <section id="propiedades">
-        <h2>Nuestras Propiedades</h2>
-        <p>Aquí se mostrarán las propiedades disponibles.</p>
+
+    <!-- PESTAÑA 2: CRM RENTAS CON SEGUIMIENTO -->
+    <section id="tab-crm-rentas" class="tab-section hidden">
+      <div class="grid-2">
+        <div class="card card-gold">
+          <h2>Registrar o Actualizar Prospecto de Renta</h2>
+          <label for="rentaPropCode">Clave de propiedad</label>
+          <select id="rentaPropCode">
+            <option value="ZR-001">ZR-001 · Planta Baja y 1er Nivel</option>
+            <option value="ZR-002">ZR-002 · 1er Nivel</option>
+            <option value="ZR-003">ZR-003 · Planta Baja</option>
+            <option value="ZR-004">ZR-004 · 2do Nivel</option>
+          </select>
+
+          <label for="prospectName">Nombre del prospecto</label>
+          <input type="text" id="prospectName" placeholder="Nombre completo del interesado" />
+
+          <label for="prospectStage">Etapa / Estatus</label>
+          <select id="prospectStage">
+            <option value="Nuevo prospecto">Nuevo prospecto</option>
+            <option value="Visita programada">Visita programada</option>
+            <option value="Visita realizada">Visita realizada</option>
+            <option value="En investigación / contrato">En investigación / contrato</option>
+            <option value="Cerrado en renta">Cerrado en renta</option>
+          </select>
+
+          <label for="visitDate">Fecha de visita o próximo seguimiento</label>
+          <input type="date" id="visitDate" />
+
+          <label for="followUpNote">Nota de visita u observaciones</label>
+          <textarea id="followUpNote" rows="3" placeholder="Ej. Recorrió planta baja y 1er nivel; solicitó requisitos de renta..."></textarea>
+
+          <button class="btn" onclick="saveRentalLead()">Guardar en CRM de Rentas</button>
+          <div id="rentaStatus" class="status-msg hidden"></div>
+        </div>
+
+        <div class="card">
+          <h2>Seguimiento y Visitas Registradas</h2>
+          <p>Historial de prospectos y visitas con registro de fecha y nota.</p>
+          <div id="rentalLeadsList"></div>
+        </div>
+      </div>
     </section>
-    
-    <section id="servicios">
-        <h2>Nuestros Servicios</h2>
-        <p>Especializados en renta y administración de inmuebles.</p>
+
+    <!-- PESTAÑA 3: MÓDULO VENTAS (PROPIEDADES Y PROSPECTOS DE VENTA) -->
+    <section id="tab-ventas" class="tab-section hidden">
+      <div class="grid-2">
+        <div class="card card-gold">
+          <h2>Registrar Propiedad o Prospecto de Venta</h2>
+          <label for="saleAdvisor">Asesor comercial asignado</label>
+          <input type="text" id="saleAdvisor" placeholder="Nombre del asesor de ventas" />
+
+          <label for="saleProperty">Propiedad o desarrollo</label>
+          <input type="text" id="saleProperty" placeholder="Ej. Casa en Guadalajara / Desarrollo Riviera Maya" />
+
+          <label for="salePrice">Precio de referencia (MXN / USD)</label>
+          <input type="text" id="salePrice" placeholder="Ej. $2,850,000 MXN" />
+
+          <label for="saleProspect">Prospecto comprador</label>
+          <input type="text" id="saleProspect" placeholder="Nombre del prospecto de compra" />
+
+          <label for="saleNotes">Observaciones comerciales</label>
+          <textarea id="saleNotes" rows="3" placeholder="Perfil de compra, crédito/contado, siguiente cita..."></textarea>
+
+          <button class="btn" onclick="saveSaleRecord()">Guardar registro de venta</button>
+          <div id="ventaStatus" class="status-msg hidden"></div>
+        </div>
+
+        <div class="card">
+          <h2>Cartera y Prospectos de Venta</h2>
+          <p>Registro separado de rentas para control de operaciones comerciales.</p>
+          <div id="salesRecordsList"></div>
+        </div>
+      </div>
     </section>
-    
-    <section id="nosotros">
-        <h2>Sobre Nosotros</h2>
-        <p>Conoce más sobre nuestra historia y valores.</p>
+
+    <!-- PESTAÑA 4: SEGURIDAD SHA-256 Y EMAILJS OTP -->
+    <section id="tab-seguridad" class="tab-section hidden">
+      <div class="grid-2">
+        <div class="card card-gold">
+          <h2>Configuración de EmailJS y Logotipo</h2>
+          <p>Define aquí tus claves de EmailJS y verifica la ruta del logotipo oficial de Zenil Grupo.</p>
+
+          <label for="cfgLogoPath">Ruta del logotipo</label>
+          <input type="text" id="cfgLogoPath" value="./logo-zenilg.png" />
+
+          <label for="cfgServiceId">EmailJS Service ID</label>
+          <input type="text" id="cfgServiceId" placeholder="service_xxxxxxxx" />
+
+          <label for="cfgTemplateId">EmailJS Template ID</label>
+          <input type="text" id="cfgTemplateId" placeholder="template_xxxxxxxx" />
+
+          <label for="cfgPublicKey">EmailJS Public Key</label>
+          <input type="text" id="cfgPublicKey" placeholder="Tu Public Key de EmailJS" />
+
+          <button class="btn" onclick="saveSecurityConfig()">Guardar configuración</button>
+          <div id="secConfigStatus" class="status-msg hidden"></div>
+        </div>
+
+        <div class="card">
+          <h2>Generador de Hash SHA-256 para Claves</h2>
+          <p>Genera el hash SHA-256 de una clave de acceso para proteger credenciales sin guardar texto plano.</p>
+
+          <label for="rawPassInput">Clave a cifrar</label>
+          <input type="text" id="rawPassInput" placeholder="Escribe una clave de prueba" />
+
+          <button class="btn btn-secondary" onclick="generateHashPreview()">Calcular SHA-256</button>
+
+          <label for="hashOutput" style="margin-top: 12px;">Resultado SHA-256</label>
+          <textarea id="hashOutput" rows="3" readonly></textarea>
+        </div>
+      </div>
     </section>
-    
-    <section id="contacto">
-        <h2>Contacto</h2>
-        <p>Ponte en contacto con nosotros para más información.</p>
-    </section>
-    
-    <footer>
-        <p>&copy; 2025 Zenil Grupo Inmobiliario. Todos los derechos reservados.</p>
-    </footer>
+  </main>
+
+  <script>
+    const STORAGE_KEYS = {
+      config: "zenil_grupo_config_v1",
+      rentalLeads: "zenil_grupo_rental_leads_v1",
+      saleRecords: "zenil_grupo_sale_records_v1"
+    };
+
+    const PROPERTY_METRICS = {
+      "ZR-001": { name: "ZR-001 · Casa Renta (Planta Baja y 1er Nivel)", week: 4, month: 14, status: "Disponible" },
+      "ZR-002": { name: "ZR-002 · Departamento Renta (1er Nivel)", week: 2, month: 9, status: "Disponible" },
+      "ZR-003": { name: "ZR-003 · Local Comercial (Planta Baja)", week: 3, month: 11, status: "Disponible" },
+      "ZR-004": { name: "ZR-004 · Unidad Renta (2do Nivel)", week: 1, month: 6, status: "Disponible" }
+    };
+
+    let activeOtpSession = null;
+
+    function loadConfig() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.config) || "{}");
+      return {
+        logoPath: saved.logoPath || "./logo-zenilg.png",
+        serviceId: saved.serviceId || "",
+        templateId: saved.templateId || "",
+        publicKey: saved.publicKey || ""
+      };
+    }
+
+    function applyConfigToUI() {
+      const cfg = loadConfig();
+      document.getElementById("headerLogo").src = cfg.logoPath;
+      document.getElementById("cfgLogoPath").value = cfg.logoPath;
+      document.getElementById("cfgServiceId").value = cfg.serviceId;
+      document.getElementById("cfgTemplateId").value = cfg.templateId;
+      document.getElementById("cfgPublicKey").value = cfg.publicKey;
+      if (cfg.publicKey && window.emailjs) {
+        emailjs.init({ publicKey: cfg.publicKey });
+      }
+    }
+
+    function saveSecurityConfig() {
+      const cfg = {
+        logoPath: document.getElementById("cfgLogoPath").value.trim() || "./logo-zenilg.png",
+        serviceId: document.getElementById("cfgServiceId").value.trim(),
+        templateId: document.getElementById("cfgTemplateId").value.trim(),
+        publicKey: document.getElementById("cfgPublicKey").value.trim()
+      };
+      localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(cfg));
+      applyConfigToUI();
+      showStatus("secConfigStatus", "Configuración guardada y logotipo actualizado.");
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+    }
+
+    async function sha256Hex(text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    async function generateHashPreview() {
+      const raw = document.getElementById("rawPassInput").value;
+      if (!raw) return;
+      document.getElementById("hashOutput").value = await sha256Hex(raw);
+    }
+
+    function showStatus(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    async function requestOtp(context) {
+      const email = document.getElementById("portalEmail").value.trim();
+      const secret = document.getElementById("portalSecret").value.trim();
+      const propCode = document.getElementById("portalPropertySelect").value;
+
+      if (!email || !secret) {
+        showStatus("portalStatus", "Ingresa tu correo y clave de acceso para solicitar el código OTP.");
+        return;
+      }
+
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      const secretHash = await sha256Hex(secret);
+      activeOtpSession = {
+        email,
+        propCode,
+        code,
+        secretHash,
+        expiresAt: Date.now() + 10 * 60 * 1000
+      };
+
+      const cfg = loadConfig();
+      if (cfg.serviceId && cfg.templateId && cfg.publicKey && window.emailjs) {
+        try {
+          emailjs.init({ publicKey: cfg.publicKey });
+          await emailjs.send(cfg.serviceId, cfg.templateId, {
+            to_email: email,
+            otp_code: code,
+            propiedad: propCode
+          });
+          showStatus("portalStatus", `Código OTP enviado por correo a ${email}. Revísalo e ingrésalo para entrar.`);
+        } catch (err) {
+          showStatus("portalStatus", `No se pudo enviar vía EmailJS (${err?.text || "verifica IDs"}). Código local de prueba: ${code}`);
+        }
+      } else {
+        showStatus("portalStatus", `EmailJS aún sin configurar. Código local de prueba para ${context}: ${code}`);
+      }
+    }
+
+    async function verifyPortalAccess() {
+      const enteredCode = document.getElementById("portalOtpInput").value.trim();
+      const currentSecret = document.getElementById("portalSecret").value.trim();
+
+      if (!activeOtpSession) {
+        showStatus("portalStatus", "Primero solicita un código OTP.");
+        return;
+      }
+      if (Date.now() > activeOtpSession.expiresAt) {
+        showStatus("portalStatus", "El código OTP ha expirado. Solicita uno nuevo.");
+        return;
+      }
+      if (enteredCode !== activeOtpSession.code) {
+        showStatus("portalStatus", "El código OTP no coincide.");
+        return;
+      }
+
+      const currentHash = await sha256Hex(currentSecret);
+      if (currentHash !== activeOtpSession.secretHash) {
+        showStatus("portalStatus", "La clave no coincide con la sesión iniciada.");
+        return;
+      }
+
+      const metrics = PROPERTY_METRICS[activeOtpSession.propCode] || PROPERTY_METRICS["ZR-001"];
+      document.getElementById("portalPropTitle").textContent = metrics.name;
+      document.getElementById("portalUserSummary").textContent = `Sesión verificada para ${activeOtpSession.email}`;
+      document.getElementById("kpiProspectsWeek").textContent = metrics.week;
+      document.getElementById("kpiProspectsMonth").textContent = metrics.month;
+      document.getElementById("kpiRentStatus").textContent = metrics.status;
+
+      document.getElementById("portalLoginBox").classList.add("hidden");
+      document.getElementById("portalDashboard").classList.remove("hidden");
+    }
+
+    function logoutPortal() {
+      activeOtpSession = null;
+      document.getElementById("portalOtpInput").value = "";
+      document.getElementById("portalDashboard").classList.add("hidden");
+      document.getElementById("portalLoginBox").classList.remove("hidden");
+      showStatus("portalStatus", "Sesión cerrada correctamente.");
+    }
+
+    function getRentalLeads() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.rentalLeads) || "[]");
+    }
+
+    function saveRentalLead() {
+      const propCode = document.getElementById("rentaPropCode").value;
+      const name = document.getElementById("prospectName").value.trim();
+      const stage = document.getElementById("prospectStage").value;
+      const visitDate = document.getElementById("visitDate").value;
+      const note = document.getElementById("followUpNote").value.trim();
+
+      if (!name) {
+        showStatus("rentaStatus", "Captura el nombre del prospecto.");
+        return;
+      }
+
+      const leads = getRentalLeads();
+      const existingIndex = leads.findIndex(
+        item => item.name.toLowerCase() === name.toLowerCase() && item.propCode === propCode
+      );
+
+      const entryText = `${visitDate || new Date().toISOString().slice(0, 10)} · [${stage}] ${note || "Actualización de seguimiento"}`;
+
+      if (existingIndex >= 0) {
+        leads[existingIndex].stage = stage;
+        leads[existingIndex].visitDate = visitDate || leads[existingIndex].visitDate;
+        leads[existingIndex].history.unshift(entryText);
+      } else {
+        leads.unshift({
+          id: Date.now(),
+          propCode,
+          name,
+          stage,
+          visitDate,
+          history: [entryText]
+        });
+      }
+
+      localStorage.setItem(STORAGE_KEYS.rentalLeads, JSON.stringify(leads));
+      document.getElementById("followUpNote").value = "";
+      renderRentalLeads();
+      showStatus("rentaStatus", "Prospecto y seguimiento guardados correctamente.");
+    }
+
+    function renderRentalLeads() {
+      const container = document.getElementById("rentalLeadsList");
+      const leads = getRentalLeads();
+      if (!leads.length) {
+        container.innerHTML = `<p>Aún no hay prospectos registrados en rentas.</p>`;
+        return;
+      }
+
+      container.innerHTML = leads.map(lead => `
+        <div class="item-row">
+          <div>
+            <strong>${lead.name}</strong>
+            <span class="badge">${lead.propCode}</span>
+            <span class="badge">${lead.stage}</span>
+          </div>
+          <ul class="history-list">
+            ${lead.history.map(h => `<li>${h}</li>`).join("")}
+          </ul>
+        </div>
+      `).join("");
+    }
+
+    function getSaleRecords() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.saleRecords) || "[]");
+    }
+
+    function saveSaleRecord() {
+      const advisor = document.getElementById("saleAdvisor").value.trim();
+      const property = document.getElementById("saleProperty").value.trim();
+      const price = document.getElementById("salePrice").value.trim();
+      const prospect = document.getElementById("saleProspect").value.trim();
+      const notes = document.getElementById("saleNotes").value.trim();
+
+      if (!property || !prospect) {
+        showStatus("ventaStatus", "Ingresa al menos la propiedad y el prospecto de venta.");
+        return;
+      }
+
+      const records = getSaleRecords();
+      records.unshift({
+        id: Date.now(),
+        advisor: advisor || "Por asignar",
+        property,
+        price: price || "Por definir",
+        prospect,
+        notes: notes || "Sin observaciones adicionales",
+        date: new Date().toISOString().slice(0, 10)
+      });
+
+      localStorage.setItem(STORAGE_KEYS.saleRecords, JSON.stringify(records));
+      document.getElementById("saleProspect").value = "";
+      document.getElementById("saleNotes").value = "";
+      renderSaleRecords();
+      showStatus("ventaStatus", "Registro de venta guardado.");
+    }
+
+    function renderSaleRecords() {
+      const container = document.getElementById("salesRecordsList");
+      const records = getSaleRecords();
+      if (!records.length) {
+        container.innerHTML = `<p>Aún no hay registros en el módulo de ventas.</p>`;
+        return;
+      }
+
+      container.innerHTML = records.map(rec => `
+        <div class="item-row">
+          <div>
+            <strong>${rec.property}</strong>
+            <span class="badge">${rec.price}</span>
+          </div>
+          <p style="margin: 6px 0 4px;">Prospecto: <strong>${rec.prospect}</strong> · Asesor: ${rec.advisor} · ${rec.date}</p>
+          <p style="margin-bottom: 0; font-size: 0.86rem;">${rec.notes}</p>
+        </div>
+      `).join("");
+    }
+
+    applyConfigToUI();
+    renderRentalLeads();
+    renderSaleRecords();
+  </script>
 </body>
 </html>
