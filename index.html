@@ -1,727 +1,1553 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenil Grupo | Portal y CRM Inmobiliario</title>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenil Grupo — Sistema Integral de Gestión Inmobiliaria</title>
+  <meta name="theme-color" content="#0A0A0A">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: { brand: { black: '#0A0A0A', card: '#141414', gold: '#D97706', goldHover: '#B45309', goldLight: '#FEF3C7' } }
+        }
+      }
+    }
+  </script>
   <style>
-    :root {
-      --bg-dark: #0b0b0d;
-      --bg-card: #141418;
-      --bg-elevated: #1c1c22;
-      --gold: #d4af37;
-      --gold-soft: rgba(212, 175, 55, 0.16);
-      --gold-border: rgba(212, 175, 55, 0.35);
-      --text-main: #ffffff;
-      --text-muted: #b3b3bd;
-      --border-subtle: rgba(255, 255, 255, 0.1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      line-height: 1.5;
-      min-height: 100vh;
-    }
-
-    header {
-      background: linear-gradient(90deg, #0b0b0d 0%, #161512 100%);
-      border-bottom: 1px solid var(--gold-border);
-      padding: 14px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand-box {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand-logo {
-      height: 46px;
-      width: auto;
-      object-fit: contain;
-      border-radius: 6px;
-      background: #ffffff;
-      padding: 4px;
-    }
-
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 0.4px;
-    }
-
-    .brand-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tab-btn {
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.88rem;
-      font-weight: 600;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--gold);
-    }
-
-    .tab-btn.active {
-      background: var(--gold);
-      color: #0b0b0d;
-      border-color: var(--gold);
-    }
-
-    main {
-      max-width: 1160px;
-      margin: 24px auto;
-      padding: 0 20px 48px;
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .card-gold {
-      border-color: var(--gold-border);
-    }
-
-    h1, h2, h3 {
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.84rem;
-      color: var(--text-main);
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.92rem;
-      margin-bottom: 12px;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
-
-    .btn {
-      background: var(--gold);
-      color: #0b0b0d;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s ease;
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-    }
-
-    .btn-secondary {
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .kpi-box {
-      background: var(--bg-elevated);
-      border: 1px solid var(--gold-border);
-      border-radius: 10px;
-      padding: 14px;
-    }
-
-    .kpi-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--gold);
-    }
-
-    .kpi-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .status-msg {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      margin-top: 8px;
-      background: var(--gold-soft);
-      border: 1px solid var(--gold-border);
-      color: var(--text-main);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .item-row {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      background: var(--gold-soft);
-      color: var(--gold);
-      border: 1px solid var(--gold-border);
-      margin-left: 8px;
-    }
-
-    .history-list {
-      margin-top: 8px;
-      padding-left: 16px;
-      color: var(--text-muted);
-      font-size: 0.86rem;
+    @media print {
+      body * { visibility: hidden; }
+      #modal-recibo, #modal-recibo * { visibility: visible; }
+      #modal-recibo {
+        position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+        background: white !important; display: flex !important; align-items: center; justify-content: center;
+      }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
-<body>
-  <header>
-    <div class="brand-box">
-      <img id="headerLogo" src="./logo-zenilg.png" alt="Logotipo Zenil Grupo" class="brand-logo" />
+<body class="bg-zinc-100 text-zinc-900 font-sans antialiased min-h-screen relative">
+
+  <!-- WHATSAPP -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <a href="https://wa.me/523300000000?text=Hola%20Zenil%20Grupo" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-105">
+      <i class="fa-brands fa-whatsapp text-2xl"></i>
+    </a>
+  </div>
+
+  <!-- MENÚ MÓVIL -->
+  <div id="mobile-menu-drawer" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col p-6 text-white">
+    <div class="flex justify-between items-center pb-4 border-b border-zinc-800">
+      <h2 class="font-extrabold text-xl text-amber-500">Menú Zenil Grupo</h2>
+      <button onclick="toggleMobileMenu()" class="text-zinc-400 hover:text-white text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav class="py-6 space-y-3 flex-1 overflow-y-auto" id="nav-menu-mobile"></nav>
+  </div>
+
+  <!-- LOGIN SEGURO -->
+  <div id="view-login" class="fixed inset-0 bg-black z-50 flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl space-y-6 text-center">
+      <div class="flex flex-col items-center justify-center gap-3">
+        <div class="w-20 h-20 bg-black rounded-2xl p-3 flex items-center justify-center border border-amber-500/40 shadow-inner">
+          <i class="fa-solid fa-building text-3xl text-amber-500"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-2xl tracking-tight text-white leading-none">Zenil Grupo</h1>
+          <span class="text-xs font-semibold text-amber-400 tracking-widest uppercase">Realty &bull; Soluciones</span>
+        </div>
+      </div>
+      <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 uppercase mb-1">Usuario / Correo / Nombre</label>
+          <input type="text" id="login-user" required placeholder="admin, correo o personal" class="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white text-sm focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-zinc-300 uppercase mb-1">Contraseña / PIN</label>
+          <input type="password" id="login-pass" required placeholder="****" class="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white text-sm font-bold tracking-widest focus:ring-2 focus:ring-amber-500">
+        </div>
+        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-xl text-sm shadow-lg transition">Ingresar al Sistema</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP PRINCIPAL -->
+  <div id="view-app" class="hidden min-h-screen flex flex-col md:flex-row">
+    <!-- SIDEBAR ESCRITORIO -->
+    <aside class="w-full md:w-64 bg-black text-white flex-col justify-between hidden md:flex min-h-screen z-30 border-r border-zinc-900">
       <div>
-        <div class="brand-title">ZENIL GRUPO</div>
-        <div class="brand-subtitle">Zenil Realty · Zenil Soluciones · Avzen Comercializadora</div>
+        <div class="p-6 border-b border-zinc-900 flex items-center gap-4">
+          <i class="fa-solid fa-building text-2xl text-amber-500"></i>
+          <div><h1 class="font-extrabold text-xl tracking-tight text-white leading-none">Zenil</h1><span class="text-[10px] font-semibold text-amber-400 tracking-widest uppercase">Grupo</span></div>
+        </div>
+        <nav class="p-4 space-y-2" id="nav-menu"></nav>
+      </div>
+      <div class="p-4 border-t border-zinc-900 text-xs text-zinc-500 text-center"><span class="font-bold text-amber-400">Guadalajara, Jal.</span></div>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-zinc-200 bg-white p-4 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-amber-500 text-black font-extrabold text-lg shadow">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-black text-amber-500 font-extrabold text-lg">
+            <i class="fa-solid fa-building"></i>
+          </div>
+          <div>
+            <h2 id="section-title" class="text-xl font-bold text-zinc-900">Dashboard General</h2>
+            <p class="text-xs text-zinc-500" id="user-role-subtitle">Sesión Activa</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="user-badge" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-black text-amber-400 border border-amber-500/30"></div>
+          <button onclick="logout()" class="px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <section id="sec-dashboard" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Propiedades</p><h3 class="text-3xl font-extrabold text-zinc-900 mt-1" id="dash-total-prop">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Prospectos</p><h3 class="text-3xl font-extrabold text-amber-600 mt-1" id="dash-total-pros">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Propietarios</p><h3 class="text-3xl font-extrabold text-amber-600 mt-1" id="dash-total-propn">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Inquilinos</p><h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="dash-total-inq">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Personal</p><h3 class="text-3xl font-extrabold text-blue-600 mt-1" id="dash-total-emp">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Tickets</p><h3 class="text-3xl font-extrabold text-rose-600 mt-1" id="dash-total-tickets">0</h3></div>
+        </div>
+      </section>
+
+      <!-- PROPIEDADES -->
+      <section id="sec-propiedades" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900" id="propiedades-header-title">Zenil Realty — Inventario</h3>
+          <button id="btn-nueva-prop" onclick="openModal('modal-propiedad')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-plus"></i> + Nueva Propiedad</button>
+        </div>
+        <div id="grid-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <!-- PROSPECTOS (CRM) -->
+      <section id="sec-prospectos" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">CRM &mdash; Gestión de Prospectos</h3>
+          <button onclick="openModal('modal-prospecto')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-user-plus"></i> + Nuevo Prospecto</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Nombre</th><th class="p-3">Teléfono</th><th class="p-3">Email</th><th class="p-3">Propiedad Interés</th><th class="p-3">Presupuesto</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-prospectos" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROPIETARIOS -->
+      <section id="sec-propietarios" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">Directorio de Propietarios</h3>
+          <button onclick="openModal('modal-propietario')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-user-plus"></i> + Registrar Propietario</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Nombre</th><th class="p-3">Teléfono</th><th class="p-3">Email</th><th class="p-3">PIN Acceso</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-propietarios" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- INQUILINOS -->
+      <section id="sec-inquilinos" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">Directorio de Inquilinos</h3>
+          <button onclick="openModal('modal-inquilino')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-user-plus"></i> + Registrar Inquilino</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Nombre</th><th class="p-3">Teléfono</th><th class="p-3">Email</th><th class="p-3">Inmueble</th><th class="p-3">PIN Acceso</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-inquilinos" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- EMPLEADOS / PERSONAL -->
+      <section id="sec-empleados" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">Personal y Cuadrillas</h3>
+          <button onclick="openModal('modal-empleado')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-user-tie"></i> + Registrar Personal</button>
+        </div>
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Nombre</th><th class="p-3">División</th><th class="p-3">Puesto</th><th class="p-3">Teléfono</th><th class="p-3">PIN Acceso</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-empleados" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- EXPEDIENTES -->
+      <section id="sec-expedientes" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">Expedientes Digitales</h3>
+          <button onclick="openModal('modal-expediente')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm">+ Nuevo Expediente</button>
+        </div>
+        <div id="grid-expedientes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <!-- COBRANZA -->
+      <section id="sec-cobranza" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900" id="cobranza-header-title">Cobranza y Pagos</h3>
+          <button id="btn-registrar-pago" onclick="openModal('modal-pago')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm">+ Registrar Movimiento</button>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Flujo</th><th class="p-3">Fecha</th><th class="p-3">Inmueble</th><th class="p-3">Concepto</th><th class="p-3">Monto</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-pagos" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MANTENIMIENTO -->
+      <section id="sec-mantenimiento" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900">Zenil Soluciones — Tickets</h3>
+          <button onclick="openModal('modal-ticket')" class="bg-amber-500 hover:bg-amber-600 text-black font-extrabold px-4 py-2 rounded-xl text-sm">+ Levantar Reporte</button>
+        </div>
+        <div id="mantenimiento-list" class="space-y-3"></div>
+      </section>
+
+      <!-- CONFIGURACIÓN Y SEGURIDAD -->
+      <section id="sec-configuracion" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm space-y-6">
+          <h3 class="text-xl font-extrabold text-zinc-900">Configuración Corporativa y Divisiones</h3>
+          <form onsubmit="saveEmpresaConfig(event)" class="space-y-4 max-w-3xl">
+            <div>
+              <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Nombre del Grupo / Marca Paraguas</label>
+              <input type="text" id="cfg-empresa" value="Zenil Grupo Inmobiliario" required class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Divisiones y Unidades de Negocio</label>
+              <input type="text" id="cfg-divisiones" value="Zenil Realty, Zenil Soluciones" required class="w-full px-4 py-3 border rounded-xl text-sm">
+              <p class="text-[11px] text-zinc-400 mt-1">Separa con comas las divisiones operativas del grupo.</p>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Contraseña de Administrador Segura</label>
+              <input type="text" id="cfg-admin-pass" value="Zenil2026*" required class="w-full px-4 py-3 border rounded-xl text-sm font-bold text-amber-700 bg-amber-50">
+              <p class="text-[11px] text-zinc-400 mt-1">Usa esta contraseña junto con el usuario <strong>admin</strong> o <strong>ismael@zenilgrupo.com</strong> para ingresar con privilegios totales.</p>
+            </div>
+            <button type="submit" class="px-6 py-3 bg-black text-amber-400 rounded-xl text-sm font-extrabold shadow-lg">Guardar Cambios de Configuración</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODALES -->
+  <div id="modal-propiedad" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Gestión Propiedad</h3><button onclick="closeModal('modal-propiedad')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="savePropiedad(event)" class="space-y-3">
+        <input type="hidden" id="prop-edit-index" value="-1">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Clave</label><input type="text" id="prop-clave" readonly class="w-full px-4 py-3 bg-zinc-100 border rounded-xl font-bold text-amber-600"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Dirección</label><input type="text" id="prop-titulo" required placeholder="Dirección" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Precio Renta (MXN)</label><input type="number" id="prop-precio" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Cuota Mantenimiento (MXN)</label><input type="number" id="prop-mantenimiento" placeholder="0" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Forma de Pago del Mantenimiento</label>
+          <select id="prop-mant-tipo" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Incluido en la renta">Incluido en la renta (Se descuenta al propietario)</option>
+            <option value="Pago por separado">Se paga por separado</option>
+          </select>
+        </div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Estatus</label><select id="prop-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Disponible">Disponible</option><option value="Rentada">Rentada</option></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">División Responsable</label><select id="prop-division" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Zenil Realty">Zenil Realty</option><option value="Zenil Soluciones">Zenil Soluciones</option></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Propietario Asignado</label><select id="prop-propietario" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select></div>
+        
+        <!-- FOTOS ACTUALES -->
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Fotos Actuales (Haz clic en la X para eliminar alguna)</label>
+          <div id="edit-photos-preview" class="grid grid-cols-4 gap-2 p-3 bg-zinc-50 rounded-xl border max-h-40 overflow-y-auto"></div>
+        </div>
+
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Subir Nuevas Fotos (Puedes seleccionar varias)</label><input type="file" id="prop-files" accept="image/*" multiple class="w-full px-4 py-3 border rounded-xl text-sm bg-zinc-50"></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-propiedad')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PROSPECTO -->
+  <div id="modal-prospecto" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Gestión de Prospecto</h3><button onclick="closeModal('modal-prospecto')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="saveProspecto(event)" class="space-y-3">
+        <input type="hidden" id="pros-edit-index" value="-1">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Nombre Completo</label><input type="text" id="pros-nombre" required placeholder="Nombre del prospecto" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Teléfono</label><input type="text" id="pros-tel" required placeholder="33 1234 5678" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Correo Electrónico</label><input type="email" id="pros-email" required placeholder="correo@ejemplo.com" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        </div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Propiedad de Interés</label><select id="pros-inmueble" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Presupuesto Aprox. (MXN)</label><input type="number" id="pros-presupuesto" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Estatus del Proceso</label><select id="pros-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Nuevo">Nuevo</option><option value="Contactado">Contactado</option><option value="Cita Agendada">Cita Agendada</option><option value="En Proceso">En Proceso</option><option value="Descartado">Descartado</option></select></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-prospecto')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar Prospecto</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-propietario" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Gestión Propietario</h3><button onclick="closeModal('modal-propietario')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="savePropietario(event)" class="space-y-3">
+        <input type="hidden" id="pr-edit-index" value="-1">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Nombre Completo</label><input type="text" id="pr-nombre" required placeholder="Nombre" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Teléfono</label><input type="text" id="pr-tel" required placeholder="33 1234 5678" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Correo Electrónico</label><input type="email" id="pr-email" required placeholder="correo@ejemplo.com" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-propietario')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-inquilino" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Gestión Inquilino</h3><button onclick="closeModal('modal-inquilino')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="saveInquilino(event)" class="space-y-3">
+        <input type="hidden" id="iq-edit-index" value="-1">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Nombre Completo</label><input type="text" id="iq-nombre" required placeholder="Nombre" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Teléfono</label><input type="text" id="iq-tel" required placeholder="33 1234 5678" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Correo Electrónico</label><input type="email" id="iq-email" required placeholder="correo@ejemplo.com" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Inmueble Asignado</label><select id="iq-inmueble" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-inquilino')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-empleado" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Gestión Personal</h3><button onclick="closeModal('modal-empleado')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="saveEmpleado(event)" class="space-y-3">
+        <input type="hidden" id="emp-edit-index" value="-1">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Nombre</label><input type="text" id="emp-nombre" required placeholder="Ej. Luis Enrique" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Correo Electrónico (Para Login)</label><input type="email" id="emp-email" placeholder="personal@zenilgrupo.com" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">División</label><select id="emp-division" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Zenil Soluciones">Zenil Soluciones</option><option value="Zenil Realty">Zenil Realty</option></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Puesto</label><input type="text" id="emp-puesto" required placeholder="Técnico / Asesor / Gestor" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Teléfono</label><input type="text" id="emp-tel" required placeholder="33 1234 5678" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-empleado')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-expediente" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Nuevo Expediente Digital</h3><button onclick="closeModal('modal-expediente')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="saveExpediente(event)" class="space-y-3">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Título del Expediente</label><input type="text" id="exp-titulo" required placeholder="Contrato / INE / Póliza / Aval" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Inmueble</label><select id="exp-inmueble" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Subir Documentos (Puedes seleccionar varios archivos)</label><input type="file" id="exp-files" multiple class="w-full px-4 py-3 border rounded-xl text-sm bg-zinc-50"></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-expediente')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-ticket" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Levantar Reporte (Soluciones)</h3><button onclick="closeModal('modal-ticket')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="saveTicket(event)" class="space-y-3">
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Inmueble</label><select id="ticket-inmueble" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Descripción del Trabajo / Problema</label><textarea id="ticket-desc" required rows="3" placeholder="Fuga de agua, instalación de bomba..." class="w-full px-4 py-3 border rounded-xl text-sm"></textarea></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Evidencia Fotográfica (Varias fotos)</label><input type="file" id="ticket-files" accept="image/*" multiple class="w-full px-4 py-3 border rounded-xl text-sm bg-zinc-50"></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-ticket')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Enviar Reporte</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE PAGO / LIQUIDACIÓN -->
+  <div id="modal-pago" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
+      <div class="flex justify-between items-center border-b pb-3"><h3 class="text-lg font-extrabold">Registrar Movimiento / Pago</h3><button onclick="closeModal('modal-pago')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button></div>
+      <form onsubmit="savePago(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Tipo de Flujo</label>
+          <select id="pago-flujo" onchange="toggleComisionFields()" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Entrada">Entrada (Renta / Ingreso)</option>
+            <option value="Salida">Salida (Liquidación Propietario)</option>
+          </select>
+        </div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Fecha</label><input type="date" id="pago-fecha" required class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Inmueble</label>
+          <select id="pago-inmueble" onchange="onPagoInmuebleChange()" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select>
+        </div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Concepto</label><input type="text" id="pago-concepto" required placeholder="Renta mes de Noviembre o Liquidación Propietario" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Monto Total Renta / Operación (MXN)</label><input type="number" id="pago-monto" oninput="calcularNetoPropietario()" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        
+        <!-- COMISIÓN Y MANTENIMIENTO -->
+        <div id="comision-container" class="hidden space-y-3 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+          <p class="text-xs font-bold text-amber-800">Desglose de Administración Zenil Realty</p>
+          <div>
+            <label class="block text-xs font-bold text-zinc-600 mb-1">Comisión de Administración (%)</label>
+            <input type="number" id="pago-comision-pct" placeholder="10" value="10" oninput="calcularNetoPropietario()" class="w-full px-3 py-2 border rounded-xl text-sm bg-white">
+          </div>
+          <div id="pago-mantenimiento-info" class="text-xs text-zinc-600 font-medium hidden">
+            Cuota Mantenimiento a descontar: <span id="pago-mant-val" class="font-bold text-zinc-900">$0.00 MXN</span> (Incluido en renta)
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-600 mb-1">Monto Neto a Entregar al Propietario (MXN)</label>
+            <input type="number" id="pago-neto-prop" readonly class="w-full px-3 py-2 bg-white border rounded-xl font-extrabold text-amber-700 text-sm">
+          </div>
+        </div>
+
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Estatus</label><select id="pago-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Pagado">Pagado</option><option value="Pendiente">Pendiente</option></select></div>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('modal-pago')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button><button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar Movimiento</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE RECIBO / COMPROBANTE OFICIAL -->
+  <div id="modal-recibo" class="fixed inset-0 bg-black/80 z-[200] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-8 space-y-6 shadow-2xl my-auto relative">
+      <div id="recibo-content" class="space-y-6 text-zinc-800">
+        <div class="flex justify-between items-center border-b pb-4">
+          <div>
+            <h3 class="text-xl font-extrabold text-black" id="rec-empresa-titulo">Zenil Grupo Inmobiliario</h3>
+            <p class="text-xs text-zinc-500" id="rec-subtitulo-tipo">Comprobante Oficial de Operación</p>
+          </div>
+          <div class="text-right">
+            <span id="rec-tipo" class="px-3 py-1 bg-amber-100 text-amber-800 font-extrabold text-xs rounded-full">ENTRADA</span>
+            <p class="text-xs text-zinc-400 mt-1" id="rec-fecha">Fecha: --/--/----</p>
+          </div>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between py-2 border-b border-zinc-100">
+            <span class="text-zinc-500 font-medium">Inmueble:</span>
+            <span class="font-bold text-amber-600" id="rec-inmueble">ZR-001</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-zinc-100">
+            <span class="text-zinc-500 font-medium">Concepto:</span>
+            <span class="font-bold text-zinc-800 text-right" id="rec-concepto">Renta mes de Noviembre</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-zinc-100">
+            <span class="text-zinc-500 font-medium">Estatus:</span>
+            <span class="font-bold text-emerald-600" id="rec-estatus">Pagado</span>
+          </div>
+
+          <!-- DESGLOSE DE ADMINISTRACIÓN -->
+          <div id="recibo-desglose-admin" class="hidden space-y-2 py-3 px-4 bg-amber-50 rounded-2xl border border-amber-200 mt-2">
+            <div class="flex justify-between text-xs font-bold text-zinc-600">
+              <span>Monto Total Cobrado (Renta):</span>
+              <span id="rec-monto-bruto">$0.00 MXN</span>
+            </div>
+            <div class="flex justify-between text-xs font-bold text-rose-600">
+              <span id="rec-label-comision">Comisión Administración Zenil Realty:</span>
+              <span id="rec-comision-val">-$0.00 MXN</span>
+            </div>
+            <div id="recibo-recibo-mant-row" class="flex justify-between text-xs font-bold text-rose-600 hidden">
+              <span id="rec-label-mant">Cuota Mantenimiento (Incluido):</span>
+              <span id="rec-mant-val">-$0.00 MXN</span>
+            </div>
+            <div class="flex justify-between text-sm font-extrabold text-amber-900 border-t border-amber-200 pt-2 mt-1">
+              <span>Neto Liquidado al Propietario:</span>
+              <span id="rec-neto-prop">$0.00 MXN</span>
+            </div>
+          </div>
+
+          <div id="recibo-monto-simple" class="flex justify-between py-3 bg-zinc-50 px-4 rounded-xl mt-4">
+            <span class="text-base font-bold text-zinc-700">Monto del Pago:</span>
+            <span class="text-xl font-extrabold text-black" id="rec-monto">$0.00 MXN</span>
+          </div>
+        </div>
+        <div class="text-center pt-4 border-t text-xs text-zinc-400">
+          <p>Este documento es un comprobante digital emitido por el sistema de gestión de Zenil Grupo.</p>
+          <p class="font-bold text-zinc-600 mt-1">Guadalajara, Jalisco, México</p>
+        </div>
+      </div>
+      <div class="flex gap-3 pt-4 border-t no-print">
+        <button type="button" onclick="closeModal('modal-recibo')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cerrar</button>
+        <button type="button" onclick="window.print()" class="w-1/2 py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-xl text-sm shadow"><i class="fa-solid fa-print mr-1"></i> Imprimir / PDF</button>
       </div>
     </div>
-    <nav>
-      <button class="tab-btn active" data-tab="portal" onclick="switchTab('portal')">Portal Propietarios / Inquilinos</button>
-      <button class="tab-btn" data-tab="crm-rentas" onclick="switchTab('crm-rentas')">CRM Rentas</button>
-      <button class="tab-btn" data-tab="ventas" onclick="switchTab('ventas')">Módulo Ventas</button>
-      <button class="tab-btn" data-tab="seguridad" onclick="switchTab('seguridad')">Seguridad y OTP</button>
-    </nav>
-  </header>
+  </div>
 
-  <main>
-    <section id="tab-portal" class="tab-section">
-      <div class="card card-gold">
-        <h1>Acceso Seguro para Propietarios e Inquilinos</h1>
-        <p>Consulta el estatus de tu propiedad, movimientos y demanda de prospectos sin exponer datos personales de terceros.</p>
-
-        <div id="portalLoginBox" class="grid-2">
-          <div>
-            <label for="portalEmail">Correo registrado</label>
-            <input type="email" id="portalEmail" placeholder="propietario@correo.com" />
-
-            <label for="portalSecret">Clave de acceso</label>
-            <input type="password" id="portalSecret" placeholder="Ingresa tu clave" />
-
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="btn" onclick="requestOtp('portal')">Enviar código OTP</button>
-              <button class="btn btn-secondary" onclick="verifyPortalAccess()">Entrar con código</button>
-            </div>
-          </div>
-
-          <div>
-            <label for="portalOtpInput">Código OTP de verificación (6 dígitos)</label>
-            <input type="text" id="portalOtpInput" maxlength="6" placeholder="123456" />
-
-            <label for="portalPropertySelect">Propiedad asignada</label>
-            <select id="portalPropertySelect">
-              <option value="ZR-001">ZR-001 · Casa Renta · Planta Baja y 1er Nivel</option>
-              <option value="ZR-002">ZR-002 · Departamento Renta · 1er Nivel</option>
-              <option value="ZR-003">ZR-003 · Local Comercial · Planta Baja</option>
-            </select>
-
-            <div id="portalStatus" class="status-msg hidden"></div>
-          </div>
-        </div>
-
-        <div id="portalDashboard" class="hidden">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
-            <div>
-              <h2 id="portalPropTitle">Propiedad</h2>
-              <p id="portalUserSummary" style="margin-bottom: 0;"></p>
-            </div>
-            <button class="btn btn-secondary" onclick="logoutPortal()">Cerrar sesión segura</button>
-          </div>
-
-          <div class="grid-3" style="margin-bottom: 18px;">
-            <div class="kpi-box">
-              <div class="kpi-value" id="kpiProspectsWeek">0</div>
-              <div class="kpi-label">Prospectos esta semana (solo conteo)</div>
-            </div>
-            <div class="kpi-box">
-              <div class="kpi-value" id="kpiProspectsMonth">0</div>
-              <div class="kpi-label">Prospectos este mes (solo conteo)</div>
-            </div>
-            <div class="kpi-box">
-              <div class="kpi-value" id="kpiRentStatus">Disponible</div>
-              <div class="kpi-label">Estatus operativo de la unidad</div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom: 0;">
-            <h3>Resumen de Actividad de la Propiedad</h3>
-            <p id="portalActivityText">Sin datos personales de prospectos visibles por política de privacidad de Zenil Grupo.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-crm-rentas" class="tab-section hidden">
-      <div class="grid-2">
-        <div class="card card-gold">
-          <h2>Registrar o Actualizar Prospecto de Renta</h2>
-          <label for="rentaPropCode">Clave de propiedad</label>
-          <select id="rentaPropCode">
-            <option value="ZR-001">ZR-001 · Planta Baja y 1er Nivel</option>
-            <option value="ZR-002">ZR-002 · 1er Nivel</option>
-            <option value="ZR-003">ZR-003 · Planta Baja</option>
-            <option value="ZR-004">ZR-004 · 2do Nivel</option>
-          </select>
-
-          <label for="prospectName">Nombre del prospecto</label>
-          <input type="text" id="prospectName" placeholder="Nombre completo del interesado" />
-
-          <label for="prospectStage">Etapa / Estatus</label>
-          <select id="prospectStage">
-            <option value="Nuevo prospecto">Nuevo prospecto</option>
-            <option value="Visita programada">Visita programada</option>
-            <option value="Visita realizada">Visita realizada</option>
-            <option value="En investigación / contrato">En investigación / contrato</option>
-            <option value="Cerrado en renta">Cerrado en renta</option>
-          </select>
-
-          <label for="visitDate">Fecha de visita o próximo seguimiento</label>
-          <input type="date" id="visitDate" />
-
-          <label for="followUpNote">Nota de visita u observaciones</label>
-          <textarea id="followUpNote" rows="3" placeholder="Ej. Recorrió planta baja y 1er nivel; solicitó requisitos de renta..."></textarea>
-
-          <button class="btn" onclick="saveRentalLead()">Guardar en CRM de Rentas</button>
-          <div id="rentaStatus" class="status-msg hidden"></div>
-        </div>
-
-        <div class="card">
-          <h2>Seguimiento y Visitas Registradas</h2>
-          <p>Historial de prospectos y visitas con registro de fecha y nota.</p>
-          <div id="rentalLeadsList"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-ventas" class="tab-section hidden">
-      <div class="grid-2">
-        <div class="card card-gold">
-          <h2>Registrar Propiedad o Prospecto de Venta</h2>
-          <label for="saleAdvisor">Asesor comercial asignado</label>
-          <input type="text" id="saleAdvisor" placeholder="Nombre del asesor de ventas" />
-
-          <label for="saleProperty">Propiedad o desarrollo</label>
-          <input type="text" id="saleProperty" placeholder="Ej. Casa en Guadalajara / Desarrollo Riviera Maya" />
-
-          <label for="salePrice">Precio de referencia (MXN / USD)</label>
-          <input type="text" id="salePrice" placeholder="Ej. $2,850,000 MXN" />
-
-          <label for="saleProspect">Prospecto comprador</label>
-          <input type="text" id="saleProspect" placeholder="Nombre del prospecto de compra" />
-
-          <label for="saleNotes">Observaciones comerciales</label>
-          <textarea id="saleNotes" rows="3" placeholder="Perfil de compra, crédito/contado, siguiente cita..."></textarea>
-
-          <button class="btn" onclick="saveSaleRecord()">Guardar registro de venta</button>
-          <div id="ventaStatus" class="status-msg hidden"></div>
-        </div>
-
-        <div class="card">
-          <h2>Cartera y Prospectos de Venta</h2>
-          <p>Registro separado de rentas para control de operaciones comerciales.</p>
-          <div id="salesRecordsList"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-seguridad" class="tab-section hidden">
-      <div class="grid-2">
-        <div class="card card-gold">
-          <h2>Configuración de EmailJS y Logotipo</h2>
-          <p>Define aquí tus claves de EmailJS y verifica la ruta del logotipo oficial de Zenil Grupo.</p>
-
-          <label for="cfgLogoPath">Ruta del logotipo</label>
-          <input type="text" id="cfgLogoPath" value="./logo-zenilg.png" />
-
-          <label for="cfgServiceId">EmailJS Service ID</label>
-          <input type="text" id="cfgServiceId" placeholder="service_xxxxxxxx" />
-
-          <label for="cfgTemplateId">EmailJS Template ID</label>
-          <input type="text" id="cfgTemplateId" placeholder="template_xxxxxxxx" />
-
-          <label for="cfgPublicKey">EmailJS Public Key</label>
-          <input type="text" id="cfgPublicKey" placeholder="Tu Public Key de EmailJS" />
-
-          <button class="btn" onclick="saveSecurityConfig()">Guardar configuración</button>
-          <div id="secConfigStatus" class="status-msg hidden"></div>
-        </div>
-
-        <div class="card">
-          <h2>Generador de Hash SHA-256 para Claves</h2>
-          <p>Genera el hash SHA-256 de una clave de acceso para proteger credenciales sin guardar texto plano.</p>
-
-          <label for="rawPassInput">Clave a cifrar</label>
-          <input type="text" id="rawPassInput" placeholder="Escribe una clave de prueba" />
-
-          <button class="btn btn-secondary" onclick="generateHashPreview()">Calcular SHA-256</button>
-
-          <label for="hashOutput" style="margin-top: 12px;">Resultado SHA-256</label>
-          <textarea id="hashOutput" rows="3" readonly></textarea>
-        </div>
-      </div>
-    </section>
-  </main>
-
+  <!-- SCRIPT -->
   <script>
-    const STORAGE_KEYS = {
-      config: "zenil_grupo_config_v1",
-      rentalLeads: "zenil_grupo_rental_leads_v1",
-      saleRecords: "zenil_grupo_sale_records_v1"
+    const SUPABASE_URL = 'https://molaczplmyhdiacjtzwf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wltRRhvR1fBnW039WqOpwA_IhXBvvdp';
+    let supabaseClient = null;
+    try {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(e) { console.log("Supabase init error:", e); }
+
+    let currentUser = null;
+    let currentEditPhotos = [];
+    let dataCache = { 
+      propiedades: [], 
+      prospectos: [],
+      propietarios: [], 
+      inquilinos: [], 
+      empleados: [], 
+      expedientes: [], 
+      tickets: [], 
+      pagos: [], 
+      empresaConfig: { 
+        empresa: 'Zenil Grupo Inmobiliario', 
+        divisiones: 'Zenil Realty, Zenil Soluciones', 
+        adminPass: 'Zenil2026*' 
+      } 
     };
 
-    const PROPERTY_METRICS = {
-      "ZR-001": { name: "ZR-001 · Casa Renta (Planta Baja y 1er Nivel)", week: 4, month: 14, status: "Disponible" },
-      "ZR-002": { name: "ZR-002 · Departamento Renta (1er Nivel)", week: 2, month: 9, status: "Disponible" },
-      "ZR-003": { name: "ZR-003 · Local Comercial (Planta Baja)", week: 3, month: 11, status: "Disponible" },
-      "ZR-004": { name: "ZR-004 · Unidad Renta (2do Nivel)", week: 1, month: 6, status: "Disponible" }
-    };
-
-    let activeOtpSession = null;
-
-    function loadConfig() {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.config) || "{}");
-      return {
-        logoPath: saved.logoPath || "./logo-zenilg.png",
-        serviceId: saved.serviceId || "",
-        templateId: saved.templateId || "",
-        publicKey: saved.publicKey || ""
-      };
-    }
-
-    function applyConfigToUI() {
-      const cfg = loadConfig();
-      document.getElementById("headerLogo").src = cfg.logoPath;
-      document.getElementById("cfgLogoPath").value = cfg.logoPath;
-      document.getElementById("cfgServiceId").value = cfg.serviceId;
-      document.getElementById("cfgTemplateId").value = cfg.templateId;
-      document.getElementById("cfgPublicKey").value = cfg.publicKey;
-      if (cfg.publicKey && window.emailjs) {
-        emailjs.init({ publicKey: cfg.publicKey });
+    async function loadFromCloud() {
+      const local = localStorage.getItem('zenil_store_data');
+      if (local) {
+        try { loadPayload(JSON.parse(local)); } catch(e) {}
       }
+
+      if (!supabaseClient) return;
+      try {
+        const { data, error } = await supabaseClient.from('zenil_store').select('*').eq('id', 1).single();
+        if (!error && data && data.payload) {
+          loadPayload(data.payload);
+          localStorage.setItem('zenil_store_data', JSON.stringify(data.payload));
+        }
+      } catch(e) { console.log("Cloud sync fallback active:", e); }
     }
 
-    function saveSecurityConfig() {
-      const cfg = {
-        logoPath: document.getElementById("cfgLogoPath").value.trim() || "./logo-zenilg.png",
-        serviceId: document.getElementById("cfgServiceId").value.trim(),
-        templateId: document.getElementById("cfgTemplateId").value.trim(),
-        publicKey: document.getElementById("cfgPublicKey").value.trim()
-      };
-      localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(cfg));
-      applyConfigToUI();
-      showStatus("secConfigStatus", "Configuración guardada y logotipo actualizado.");
+    async function saveToCloud() {
+      localStorage.setItem('zenil_store_data', JSON.stringify(dataCache));
+
+      if (!supabaseClient) return;
+      try {
+        await supabaseClient.from('zenil_store').upsert({ id: 1, payload: dataCache });
+      } catch(e) { console.log("Cloud save error (stored locally):", e); }
     }
 
-    function switchTab(tabName) {
-      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.add("hidden"));
-      document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+    function loadPayload(p) {
+      dataCache.propiedades = p.propiedades || [];
+      dataCache.prospectos = p.prospectos || [];
+      dataCache.propietarios = p.propietarios || [];
+      dataCache.inquilinos = p.inquilinos || [];
+      dataCache.empleados = p.empleados || [];
+      dataCache.expedientes = p.expedientes || [];
+      dataCache.tickets = p.tickets || [];
+      dataCache.pagos = p.pagos || [];
+      if (p.empresaConfig) {
+        dataCache.empresaConfig = {
+          empresa: p.empresaConfig.empresa || 'Zenil Grupo Inmobiliario',
+          divisiones: p.empresaConfig.divisiones || 'Zenil Realty, Zenil Soluciones',
+          adminPass: p.empresaConfig.adminPass || 'Zenil2026*'
+        };
+      }
 
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      dataCache.pagos.forEach(pg => {
+        if (!pg.propietarioEmail && pg.inmueble) {
+          const prop = dataCache.propiedades.find(prop => prop.clave === pg.inmueble);
+          if (prop && prop.propietarioEmail) {
+            pg.propietarioEmail = prop.propietarioEmail;
+          }
+        }
       });
     }
 
-    async function sha256Hex(text) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(text);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-      return Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
+    function normalizeStr(str) {
+      return (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     }
 
-    async function generateHashPreview() {
-      const raw = document.getElementById("rawPassInput").value;
-      if (!raw) return;
-      document.getElementById("hashOutput").value = await sha256Hex(raw);
+    function getPropietarioPropiedades(user) {
+      if (!user || user.role !== 'propietario') return dataCache.propiedades;
+      const userEmail = normalizeStr(user.email);
+      const userNorm = normalizeStr(user.name);
+      
+      return dataCache.propiedades.filter(p => {
+        const pEmail = normalizeStr(p.propietarioEmail);
+        const pName = normalizeStr(p.propietario);
+        if (pEmail && userEmail) return pEmail === userEmail;
+        return pName === userNorm;
+      });
     }
 
-    function showStatus(elementId, message) {
-      const el = document.getElementById(elementId);
-      el.textContent = message;
-      el.classList.remove("hidden");
+    async function readFilesAsBase64(fileInputId) {
+      const input = document.getElementById(fileInputId);
+      if (!input || !input.files || input.files.length === 0) return [];
+      const promises = Array.from(input.files).map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ name: file.name, url: reader.result });
+          reader.onerror = error => reject(error);
+          reader.readAsDataURL(file);
+        });
+      });
+      return await Promise.all(promises);
     }
 
-    async function requestOtp(context) {
-      const email = document.getElementById("portalEmail").value.trim();
-      const secret = document.getElementById("portalSecret").value.trim();
-      const propCode = document.getElementById("portalPropertySelect").value;
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadFromCloud();
+      refreshAllViews();
+    });
 
-      if (!email || !secret) {
-        showStatus("portalStatus", "Ingresa tu correo y clave de acceso para solicitar el código OTP.");
-        return;
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu-drawer').classList.toggle('hidden');
+    }
+
+    function toggleComisionFields() {
+      const flujo = document.getElementById('pago-flujo').value;
+      const container = document.getElementById('comision-container');
+      if (flujo === 'Salida') {
+        container.classList.remove('hidden');
+        onPagoInmuebleChange();
+      } else {
+        container.classList.add('hidden');
       }
+    }
 
-      const code = String(Math.floor(100000 + Math.random() * 900000));
-      const secretHash = await sha256Hex(secret);
-      activeOtpSession = {
-        email,
-        propCode,
-        code,
-        secretHash,
-        expiresAt: Date.now() + 10 * 60 * 1000
-      };
-
-      const cfg = loadConfig();
-      if (cfg.serviceId && cfg.templateId && cfg.publicKey && window.emailjs) {
-        try {
-          emailjs.init({ publicKey: cfg.publicKey });
-          await emailjs.send(cfg.serviceId, cfg.templateId, {
-            to_email: email,
-            otp_code: code,
-            propiedad: propCode
-          });
-          showStatus("portalStatus", `Código OTP enviado por correo a ${email}. Revísalo e ingrésalo para entrar.`);
-        } catch (err) {
-          showStatus("portalStatus", `No se pudo enviar vía EmailJS (${err?.text || "verifica IDs"}). Código local de prueba: ${code}`);
+    function onPagoInmuebleChange() {
+      const inmuebleClave = document.getElementById('pago-inmueble').value;
+      const prop = dataCache.propiedades.find(p => p.clave === inmuebleClave);
+      const mantInfo = document.getElementById('pago-mantenimiento-info');
+      
+      if (prop && prop.mantenimiento && parseFloat(prop.mantenimiento) > 0 && prop.mantTipo === 'Incluido en la renta') {
+        mantInfo.classList.remove('hidden');
+        document.getElementById('pago-mant-val').innerText = '$' + Number(prop.mantenimiento).toLocaleString() + ' MXN';
+        if (!document.getElementById('pago-monto').value && prop.precio) {
+          document.getElementById('pago-monto').value = prop.precio;
         }
       } else {
-        showStatus("portalStatus", `EmailJS aún sin configurar. Código local de prueba para ${context}: ${code}`);
+        mantInfo.classList.add('hidden');
       }
+      calcularNetoPropietario();
     }
 
-    async function verifyPortalAccess() {
-      const enteredCode = document.getElementById("portalOtpInput").value.trim();
-      const currentSecret = document.getElementById("portalSecret").value.trim();
-
-      if (!activeOtpSession) {
-        showStatus("portalStatus", "Primero solicita un código OTP.");
-        return;
-      }
-      if (Date.now() > activeOtpSession.expiresAt) {
-        showStatus("portalStatus", "El código OTP ha expirado. Solicita uno nuevo.");
-        return;
-      }
-      if (enteredCode !== activeOtpSession.code) {
-        showStatus("portalStatus", "El código OTP no coincide.");
-        return;
+    function calcularNetoPropietario() {
+      const montoTotal = parseFloat(document.getElementById('pago-monto').value) || 0;
+      const pct = parseFloat(document.getElementById('pago-comision-pct').value) || 0;
+      const comision = (montoTotal * pct) / 100;
+      
+      const inmuebleClave = document.getElementById('pago-inmueble').value;
+      const prop = dataCache.propiedades.find(p => p.clave === inmuebleClave);
+      let mantenimientoMonto = 0;
+      
+      if (prop && prop.mantenimiento && parseFloat(prop.mantenimiento) > 0 && prop.mantTipo === 'Incluido en la renta') {
+        mantenimientoMonto = parseFloat(prop.mantenimiento) || 0;
       }
 
-      const currentHash = await sha256Hex(currentSecret);
-      if (currentHash !== activeOtpSession.secretHash) {
-        showStatus("portalStatus", "La clave no coincide con la sesión iniciada.");
-        return;
-      }
-
-      const metrics = PROPERTY_METRICS[activeOtpSession.propCode] || PROPERTY_METRICS["ZR-001"];
-      document.getElementById("portalPropTitle").textContent = metrics.name;
-      document.getElementById("portalUserSummary").textContent = `Sesión verificada para ${activeOtpSession.email}`;
-      document.getElementById("kpiProspectsWeek").textContent = metrics.week;
-      document.getElementById("kpiProspectsMonth").textContent = metrics.month;
-      document.getElementById("kpiRentStatus").textContent = metrics.status;
-
-      document.getElementById("portalLoginBox").classList.add("hidden");
-      document.getElementById("portalDashboard").classList.remove("hidden");
+      const neto = montoTotal - comision - mantenimientoMonto;
+      document.getElementById('pago-neto-prop').value = neto.toFixed(2);
     }
 
-    function logoutPortal() {
-      activeOtpSession = null;
-      document.getElementById("portalOtpInput").value = "";
-      document.getElementById("portalDashboard").classList.add("hidden");
-      document.getElementById("portalLoginBox").classList.remove("hidden");
-      showStatus("portalStatus", "Sesión cerrada correctamente.");
-    }
+    async function handleLogin(e) {
+      e.preventDefault();
+      await loadFromCloud();
 
-    function getRentalLeads() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.rentalLeads) || "[]");
-    }
+      const u = document.getElementById('login-user').value.trim().toLowerCase();
+      const p = document.getElementById('login-pass').value.trim();
 
-    function saveRentalLead() {
-      const propCode = document.getElementById("rentaPropCode").value;
-      const name = document.getElementById("prospectName").value.trim();
-      const stage = document.getElementById("prospectStage").value;
-      const visitDate = document.getElementById("visitDate").value;
-      const note = document.getElementById("followUpNote").value.trim();
+      const adminPasswordActual = (dataCache.empresaConfig && dataCache.empresaConfig.adminPass) ? dataCache.empresaConfig.adminPass : 'Zenil2026*';
 
-      if (!name) {
-        showStatus("rentaStatus", "Captura el nombre del prospecto.");
-        return;
-      }
-
-      const leads = getRentalLeads();
-      const existingIndex = leads.findIndex(
-        item => item.name.toLowerCase() === name.toLowerCase() && item.propCode === propCode
-      );
-
-      const entryText = `${visitDate || new Date().toISOString().slice(0, 10)} · [${stage}] ${note || "Actualización de seguimiento"}`;
-
-      if (existingIndex >= 0) {
-        leads[existingIndex].stage = stage;
-        leads[existingIndex].visitDate = visitDate || leads[existingIndex].visitDate;
-        leads[existingIndex].history.unshift(entryText);
+      if ((u === 'admin' || u === 'ismael@zenilgrupo.com') && p === adminPasswordActual) {
+        currentUser = { role: 'admin', name: 'Ismael Ávalos (Lobo)' };
       } else {
-        leads.unshift({
-          id: Date.now(),
-          propCode,
-          name,
-          stage,
-          visitDate,
-          history: [entryText]
+        const empEncontrado = dataCache.empleados.find(emp => {
+          const emailMatch = emp.email && emp.email.toLowerCase() === u;
+          const nameMatch = emp.nombre && normalizeStr(emp.nombre).includes(normalizeStr(u));
+          return (emailMatch || nameMatch) && String(emp.pin) === p;
         });
+
+        const propEncontrado = dataCache.propietarios.find(pr => {
+          const emailMatch = pr.email && pr.email.toLowerCase() === u;
+          const nameMatch = pr.nombre && normalizeStr(pr.nombre).includes(normalizeStr(u));
+          return (emailMatch || nameMatch) && String(pr.pin) === p;
+        });
+
+        const inqEncontrado = dataCache.inquilinos.find(iq => {
+          const emailMatch = iq.email && iq.email.toLowerCase() === u;
+          const nameMatch = iq.nombre && normalizeStr(iq.nombre).includes(normalizeStr(u));
+          return (emailMatch || nameMatch) && String(iq.pin) === p;
+        });
+
+        if (empEncontrado) {
+          currentUser = { role: 'operador', name: empEncontrado.nombre, email: empEncontrado.email || '' };
+        } else if (propEncontrado) {
+          currentUser = { role: 'propietario', name: propEncontrado.nombre, email: propEncontrado.email };
+        } else if (inqEncontrado) {
+          currentUser = { role: 'inquilino', name: inqEncontrado.nombre, email: inqEncontrado.email || '', inmueble: inqEncontrado.inmueble };
+        } else {
+          alert("Usuario, correo o PIN incorrectos.");
+          return;
+        }
       }
 
-      localStorage.setItem(STORAGE_KEYS.rentalLeads, JSON.stringify(leads));
-      document.getElementById("followUpNote").value = "";
-      renderRentalLeads();
-      showStatus("rentaStatus", "Prospecto y seguimiento guardados correctamente.");
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-app').classList.remove('hidden');
+      document.getElementById('user-badge').innerText = currentUser.name;
+      setupMenu();
+      refreshAllViews();
     }
 
-    function renderRentalLeads() {
-      const container = document.getElementById("rentalLeadsList");
-      const leads = getRentalLeads();
-      if (!leads.length) {
-        container.innerHTML = `<p>Aún no hay prospectos registrados en rentas.</p>`;
+    function setupMenu() {
+      const nav = document.getElementById('nav-menu');
+      const navMobile = document.getElementById('nav-menu-mobile');
+      let menuHtml = '';
+
+      if (currentUser.role === 'admin') {
+        document.getElementById('user-role-subtitle').innerText = 'Administrador General';
+        menuHtml = `
+          <button onclick="showSection('dashboard'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-chart-pie mr-2"></i> Dashboard</button>
+          <button onclick="showSection('propiedades'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-building mr-2"></i> Propiedades</button>
+          <button onclick="showSection('prospectos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-viewfinder mr-2"></i> Prospectos</button>
+          <button onclick="showSection('propietarios'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-user-tie mr-2"></i> Propietarios</button>
+          <button onclick="showSection('inquilinos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-people-roof mr-2"></i> Inquilinos</button>
+          <button onclick="showSection('empleados'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-gear mr-2"></i> Personal</button>
+          <button onclick="showSection('expedientes'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-folder-open mr-2"></i> Expedientes</button>
+          <button onclick="showSection('cobranza'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Cobranza y Pagos</button>
+          <button onclick="showSection('mantenimiento'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> Soluciones</button>
+          <button onclick="showSection('configuracion'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-gear mr-2"></i> Configuración</button>
+        `;
+        showSection('dashboard');
+      } else if (currentUser.role === 'operador') {
+        document.getElementById('user-role-subtitle').innerText = 'Personal Operativo — ' + currentUser.name;
+        menuHtml = `
+          <button onclick="showSection('dashboard'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-chart-pie mr-2"></i> Dashboard</button>
+          <button onclick="showSection('propiedades'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-building mr-2"></i> Propiedades</button>
+          <button onclick="showSection('prospectos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-viewfinder mr-2"></i> Prospectos</button>
+          <button onclick="showSection('propietarios'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-user-tie mr-2"></i> Propietarios</button>
+          <button onclick="showSection('inquilinos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-people-roof mr-2"></i> Inquilinos</button>
+          <button onclick="showSection('empleados'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-gear mr-2"></i> Personal</button>
+          <button onclick="showSection('expedientes'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-folder-open mr-2"></i> Expedientes</button>
+          <button onclick="showSection('cobranza'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Cobranza y Pagos</button>
+          <button onclick="showSection('mantenimiento'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> Soluciones</button>
+        `;
+        showSection('dashboard');
+      } else if (currentUser.role === 'propietario') {
+        document.getElementById('user-role-subtitle').innerText = 'Portal Propietario — ' + currentUser.name;
+        menuHtml = `
+          <button onclick="showSection('propiedades'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-building mr-2"></i> Mis Propiedades</button>
+          <button onclick="showSection('cobranza'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Mis Liquidaciones (Salidas)</button>
+          <button onclick="showSection('mantenimiento'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> Reportes / Tickets</button>
+        `;
+        showSection('propiedades');
+      } else if (currentUser.role === 'inquilino') {
+        document.getElementById('user-role-subtitle').innerText = 'Portal Inquilino';
+        menuHtml = `
+          <button onclick="showSection('cobranza'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Mis Pagos de Renta</button>
+          <button onclick="showSection('mantenimiento'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> Levantar Reporte</button>
+        `;
+        showSection('cobranza');
+      }
+
+      nav.innerHTML = menuHtml;
+      navMobile.innerHTML = menuHtml;
+    }
+
+    function logout() { location.reload(); }
+
+    function showSection(id) {
+      if (currentUser && currentUser.role === 'operador' && id === 'configuracion') {
+        alert("Acceso denegado. El apartado de configuración está reservado para el administrador.");
         return;
       }
-
-      container.innerHTML = leads.map(lead => `
-        <div class="item-row">
-          <div>
-            <strong>${lead.name}</strong>
-            <span class="badge">${lead.propCode}</span>
-            <span class="badge">${lead.stage}</span>
-          </div>
-          <ul class="history-list">
-            ${lead.history.map(h => `<li>${h}</li>`).join("")}
-          </ul>
-        </div>
-      `).join("");
-    }
-
-    function getSaleRecords() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.saleRecords) || "[]");
-    }
-
-    function saveSaleRecord() {
-      const advisor = document.getElementById("saleAdvisor").value.trim();
-      const property = document.getElementById("saleProperty").value.trim();
-      const price = document.getElementById("salePrice").value.trim();
-      const prospect = document.getElementById("saleProspect").value.trim();
-      const notes = document.getElementById("saleNotes").value.trim();
-
-      if (!property || !prospect) {
-        showStatus("ventaStatus", "Ingresa al menos la propiedad y el prospecto de venta.");
-        return;
+      if (currentUser && (currentUser.role === 'inquilino' || currentUser.role === 'propietario') && id === 'dashboard') {
+        id = currentUser.role === 'propietario' ? 'propiedades' : 'cobranza';
       }
-
-      const records = getSaleRecords();
-      records.unshift({
-        id: Date.now(),
-        advisor: advisor || "Por asignar",
-        property,
-        price: price || "Por definir",
-        prospect,
-        notes: notes || "Sin observaciones adicionales",
-        date: new Date().toISOString().slice(0, 10)
+      ['dashboard', 'propiedades', 'prospectos', 'propietarios', 'inquilinos', 'empleados', 'expedientes', 'cobranza', 'mantenimiento', 'configuracion'].forEach(s => {
+        const el = document.getElementById(`sec-${s}`);
+        if(el) el.classList.add('hidden');
       });
-
-      localStorage.setItem(STORAGE_KEYS.saleRecords, JSON.stringify(records));
-      document.getElementById("saleProspect").value = "";
-      document.getElementById("saleNotes").value = "";
-      renderSaleRecords();
-      showStatus("ventaStatus", "Registro de venta guardado.");
+      const target = document.getElementById(`sec-${id}`);
+      if(target) {
+        target.classList.remove('hidden');
+        if (id === 'configuracion' && currentUser && currentUser.role === 'admin') {
+          document.getElementById('cfg-empresa').value = dataCache.empresaConfig.empresa || 'Zenil Grupo Inmobiliario';
+          document.getElementById('cfg-divisiones').value = dataCache.empresaConfig.divisiones || 'Zenil Realty, Zenil Soluciones';
+          document.getElementById('cfg-admin-pass').value = dataCache.empresaConfig.adminPass || 'Zenil2026*';
+        }
+      }
     }
 
-    function renderSaleRecords() {
-      const container = document.getElementById("salesRecordsList");
-      const records = getSaleRecords();
-      if (!records.length) {
-        container.innerHTML = `<p>Aún no hay registros en el módulo de ventas.</p>`;
+    async function saveEmpresaConfig(e) {
+      e.preventDefault();
+      dataCache.empresaConfig.empresa = document.getElementById('cfg-empresa').value;
+      dataCache.empresaConfig.divisiones = document.getElementById('cfg-divisiones').value;
+      dataCache.empresaConfig.adminPass = document.getElementById('cfg-admin-pass').value;
+      await saveToCloud();
+      alert('Configuración corporativa y divisiones actualizadas con éxito.');
+    }
+
+    function refreshAllViews() {
+      document.getElementById('dash-total-prop').innerText = dataCache.propiedades.length;
+      document.getElementById('dash-total-pros').innerText = dataCache.prospectos.length;
+      document.getElementById('dash-total-propn').innerText = dataCache.propietarios.length;
+      document.getElementById('dash-total-inq').innerText = dataCache.inquilinos.length;
+      document.getElementById('dash-total-emp').innerText = dataCache.empleados.length;
+      document.getElementById('dash-total-tickets').innerText = dataCache.tickets.length;
+      
+      const empresaNombre = (dataCache.empresaConfig && dataCache.empresaConfig.empresa) ? dataCache.empresaConfig.empresa : 'Zenil Grupo Inmobiliario';
+      document.getElementById('rec-empresa-titulo').innerText = empresaNombre;
+
+      renderPropiedades(); 
+      renderProspectos();
+      renderPropietarios(); 
+      renderInquilinos(); 
+      renderEmpleados(); 
+      renderExpedientes(); 
+      renderTickets(); 
+      renderPagos();
+    }
+
+    function openModal(id, index = -1) {
+      if(id==='modal-propiedad') {
+        document.getElementById('prop-edit-index').value = index;
+        const selectProp = document.getElementById('prop-propietario');
+        selectProp.innerHTML = dataCache.propietarios.map(p => `<option value="${p.email}">${p.nombre} (${p.email})</option>`).join('') || '<option value="">Sin propietarios</option>';
+        
+        if(index >= 0) {
+          const p = dataCache.propiedades[index];
+          document.getElementById('prop-clave').value = p.clave;
+          document.getElementById('prop-titulo').value = p.titulo;
+          document.getElementById('prop-precio').value = p.precio;
+          document.getElementById('prop-mantenimiento').value = p.mantenimiento || '';
+          document.getElementById('prop-mant-tipo').value = p.mantTipo || 'Incluido en la renta';
+          document.getElementById('prop-estatus').value = p.estatus;
+          document.getElementById('prop-division').value = p.division || 'Zenil Realty';
+          if (p.propietarioEmail) {
+            selectProp.value = p.propietarioEmail;
+          } else {
+            const foundPr = dataCache.propietarios.find(pr => normalizeStr(pr.nombre) === normalizeStr(p.propietario));
+            if (foundPr) selectProp.value = foundPr.email;
+          }
+          currentEditPhotos = [...(p.fotos || [])];
+        } else {
+          document.getElementById('prop-clave').value = 'ZR-' + String(dataCache.propiedades.length + 1).padStart(3, '0');
+          document.getElementById('prop-titulo').value = '';
+          document.getElementById('prop-precio').value = '';
+          document.getElementById('prop-mantenimiento').value = '';
+          document.getElementById('prop-mant-tipo').value = 'Incluido en la renta';
+          document.getElementById('prop-estatus').value = 'Disponible';
+          document.getElementById('prop-division').value = 'Zenil Realty';
+          currentEditPhotos = [];
+        }
+        document.getElementById('prop-files').value = '';
+        renderEditPhotosPreview();
+      } else if(id==='modal-prospecto') {
+        document.getElementById('pros-edit-index').value = index;
+        const selectProsProp = document.getElementById('pros-inmueble');
+        selectProsProp.innerHTML = dataCache.propiedades.map(p => `<option value="${p.clave}">${p.clave} - ${p.titulo} ($${Number(p.precio).toLocaleString()})</option>`).join('') || '<option value="">Sin propiedades disponibles</option>';
+        
+        if(index >= 0) {
+          const pros = dataCache.prospectos[index];
+          document.getElementById('pros-nombre').value = pros.nombre;
+          document.getElementById('pros-tel').value = pros.tel;
+          document.getElementById('pros-email').value = pros.email || '';
+          document.getElementById('pros-inmueble').value = pros.inmueble;
+          document.getElementById('pros-presupuesto').value = pros.presupuesto;
+          document.getElementById('pros-estatus').value = pros.estatus;
+        } else {
+          document.getElementById('pros-nombre').value = '';
+          document.getElementById('pros-tel').value = '';
+          document.getElementById('pros-email').value = '';
+          document.getElementById('pros-presupuesto').value = '';
+          document.getElementById('pros-estatus').value = 'Nuevo';
+          if (dataCache.propiedades.length > 0) {
+            document.getElementById('pros-inmueble').value = dataCache.propiedades[0].clave;
+          }
+        }
+      } else if(id==='modal-propietario') {
+        document.getElementById('pr-edit-index').value = index;
+        const pr = index >= 0 ? dataCache.propietarios[index] : {nombre:'', tel:'', email:''};
+        document.getElementById('pr-nombre').value = pr.nombre;
+        document.getElementById('pr-tel').value = pr.tel;
+        document.getElementById('pr-email').value = pr.email;
+      } else if(id==='modal-inquilino') {
+        document.getElementById('iq-edit-index').value = index;
+        const selectInq = document.getElementById('iq-inmueble');
+        selectInq.innerHTML = dataCache.propiedades.map(p=>`<option value="${p.clave}">${p.clave} - ${p.titulo}</option>`).join('') || '<option value="">Sin propiedades</option>';
+        const iq = index >= 0 ? dataCache.inquilinos[index] : {nombre:'', tel:'', email:'', inmueble:''};
+        document.getElementById('iq-nombre').value = iq.nombre;
+        document.getElementById('iq-tel').value = iq.tel;
+        document.getElementById('iq-email').value = iq.email || '';
+        if(index >= 0) selectInq.value = iq.inmueble;
+      } else if(id==='modal-empleado') {
+        document.getElementById('emp-edit-index').value = index;
+        const emp = index >= 0 ? dataCache.empleados[index] : {nombre:'', email:'', division:'Zenil Soluciones', puesto:'', tel:''};
+        document.getElementById('emp-nombre').value = emp.nombre;
+        document.getElementById('emp-email').value = emp.email || '';
+        document.getElementById('emp-division').value = emp.division;
+        document.getElementById('emp-puesto').value = emp.puesto;
+        document.getElementById('emp-tel').value = emp.tel;
+      } else if(id==='modal-expediente') {
+        const selectExp = document.getElementById('exp-inmueble');
+        let propsParaExp = dataCache.propiedades;
+        if (currentUser && currentUser.role === 'propietario') {
+          propsParaExp = getPropietarioPropiedades(currentUser);
+        }
+        selectExp.innerHTML = propsParaExp.map(p=>`<option value="${p.clave}">${p.clave} - ${p.titulo}</option>`).join('') || '<option value="">Sin propiedades</option>';
+        document.getElementById('exp-titulo').value = '';
+        document.getElementById('exp-files').value = '';
+      } else if(id==='modal-ticket') {
+        const selectTick = document.getElementById('ticket-inmueble');
+        let propsParaTicket = dataCache.propiedades;
+        if (currentUser && currentUser.role === 'propietario') {
+          propsParaTicket = getPropietarioPropiedades(currentUser);
+        } else if (currentUser && currentUser.role === 'inquilino') {
+          const inqObj = dataCache.inquilinos.find(iq => normalizeStr(iq.nombre) === normalizeStr(currentUser.name));
+          const claveInq = inqObj ? inqObj.inmueble : '';
+          propsParaTicket = dataCache.propiedades.filter(p => p.clave === claveInq);
+        }
+        selectTick.innerHTML = propsParaTicket.map(p=>`<option value="${p.clave}">${p.clave} - ${p.titulo}</option>`).join('') || '<option value="">Sin inmuebles asignados</option>';
+        document.getElementById('ticket-desc').value = '';
+        document.getElementById('ticket-files').value = '';
+      } else if(id==='modal-pago') {
+        const selectPago = document.getElementById('pago-inmueble');
+        selectPago.innerHTML = dataCache.propiedades.map(p=>`<option value="${p.clave}">${p.clave} - ${p.titulo}</option>`).join('') || '<option value="">Sin propiedades</option>';
+        document.getElementById('pago-flujo').value = 'Entrada';
+        document.getElementById('pago-fecha').value = new Date().toISOString().split('T')[0];
+        document.getElementById('pago-concepto').value = '';
+        document.getElementById('pago-monto').value = '';
+        document.getElementById('comision-container').classList.add('hidden');
+        if (dataCache.propiedades.length > 0) {
+          selectPago.value = dataCache.propiedades[0].clave;
+          document.getElementById('pago-monto').value = dataCache.propiedades[0].precio;
+        }
+      }
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // --- GESTIÓN DE FOTOS EN MODAL ---
+    function renderEditPhotosPreview() {
+      const container = document.getElementById('edit-photos-preview');
+      if (!container) return;
+      if (currentEditPhotos.length === 0) {
+        container.innerHTML = '<span class="text-xs text-zinc-400 col-span-full">No hay fotos guardadas actualmente.</span>';
         return;
       }
-
-      container.innerHTML = records.map(rec => `
-        <div class="item-row">
-          <div>
-            <strong>${rec.property}</strong>
-            <span class="badge">${rec.price}</span>
-          </div>
-          <p style="margin: 6px 0 4px;">Prospecto: <strong>${rec.prospect}</strong> · Asesor: ${rec.advisor} · ${rec.date}</p>
-          <p style="margin-bottom: 0; font-size: 0.86rem;">${rec.notes}</p>
+      container.innerHTML = currentEditPhotos.map((url, i) => `
+        <div class="relative group w-16 h-16 border rounded-xl overflow-hidden bg-white shadow-sm">
+          <img src="${url}" class="w-full h-full object-cover">
+          <button type="button" onclick="removeEditPhoto(${i})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow hover:bg-rose-700" title="Eliminar foto">
+            <i class="fa-solid fa-xmark text-[10px]"></i>
+          </button>
         </div>
-      `).join("");
+      `).join('');
     }
 
-    applyConfigToUI();
-    renderRentalLeads();
-    renderSaleRecords();
+    function removeEditPhoto(i) {
+      currentEditPhotos.splice(i, 1);
+      renderEditPhotosPreview();
+    }
+
+    // --- FUNCIÓN DE RECIBOS ---
+    function verRecibo(realIdx) {
+      const pg = dataCache.pagos[realIdx];
+      if (!pg) return;
+
+      if (currentUser && currentUser.role === 'inquilino') {
+        if (pg.tipoFlujo !== 'Entrada') {
+          alert("Acceso denegado. Este comprobante corresponde a liquidación de propietario.");
+          return;
+        }
+      } else if (currentUser && currentUser.role === 'propietario') {
+        if (pg.tipoFlujo !== 'Salida') {
+          alert("Acceso denegado. Este comprobante corresponde a pago de inquilino.");
+          return;
+        }
+      }
+
+      document.getElementById('rec-tipo').innerText = pg.tipoFlujo || 'Entrada';
+      document.getElementById('rec-subtitulo-tipo').innerText = pg.tipoFlujo === 'Salida' ? 'Comprobante de Liquidación Propietario' : 'Comprobante de Pago de Renta';
+      document.getElementById('rec-fecha').innerText = 'Fecha: ' + (pg.fecha || 'N/A');
+      document.getElementById('rec-inmueble').innerText = pg.inmueble;
+      document.getElementById('rec-concepto').innerText = pg.concepto;
+      document.getElementById('rec-estatus').innerText = pg.estatus;
+
+      const desgloseContainer = document.getElementById('recibo-desglose-admin');
+      const montoSimpleContainer = document.getElementById('recibo-monto-simple');
+
+      if (pg.tipoFlujo === 'Salida' && pg.netoPropietario !== undefined) {
+        desgloseContainer.classList.remove('hidden');
+        montoSimpleContainer.classList.add('hidden');
+        document.getElementById('rec-monto-bruto').innerText = '$' + Number(pg.monto).toLocaleString() + ' MXN';
+        document.getElementById('rec-comision-val').innerText = '-$' + Number(pg.comisionMonto || 0).toLocaleString() + ' MXN (' + (pg.comisionPct || 0) + '%)';
+        
+        const recMantRow = document.getElementById('recibo-recibo-mant-row');
+        if (pg.mantenimientoMonto && pg.mantenimientoMonto > 0) {
+          recMantRow.classList.remove('hidden');
+          document.getElementById('rec-mant-val').innerText = '-$' + Number(pg.mantenimientoMonto).toLocaleString() + ' MXN';
+        } else {
+          recMantRow.classList.add('hidden');
+        }
+
+        document.getElementById('rec-neto-prop').innerText = '$' + Number(pg.netoPropietario).toLocaleString() + ' MXN';
+      } else {
+        desgloseContainer.classList.add('hidden');
+        montoSimpleContainer.classList.remove('hidden');
+        document.getElementById('rec-monto').innerText = '$' + Number(pg.monto).toLocaleString() + ' MXN';
+      }
+
+      openModal('modal-recibo');
+    }
+
+    async function savePropiedad(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('prop-edit-index').value);
+      const nuevasFotos = await readFilesAsBase64('prop-files');
+      
+      let fotosFinales = [...currentEditPhotos];
+      if (nuevasFotos.length > 0) {
+        fotosFinales = fotosFinales.concat(nuevasFotos.map(f => f.url));
+      }
+      if (fotosFinales.length === 0) {
+        fotosFinales = ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80'];
+      }
+
+      const selectedEmail = document.getElementById('prop-propietario').value;
+      const ownerObj = dataCache.propietarios.find(pr => pr.email === selectedEmail);
+
+      const propData = {
+        clave: document.getElementById('prop-clave').value,
+        titulo: document.getElementById('prop-titulo').value,
+        precio: document.getElementById('prop-precio').value,
+        mantenimiento: document.getElementById('prop-mantenimiento').value,
+        mantTipo: document.getElementById('prop-mant-tipo').value,
+        estatus: document.getElementById('prop-estatus').value,
+        division: document.getElementById('prop-division').value,
+        propietarioEmail: selectedEmail,
+        propietario: ownerObj ? ownerObj.nombre : selectedEmail,
+        fotos: fotosFinales
+      };
+
+      if(idx >= 0) {
+        dataCache.propiedades[idx] = propData;
+      } else {
+        dataCache.propiedades.push(propData);
+      }
+      await saveToCloud();
+      closeModal('modal-propiedad');
+      refreshAllViews();
+      alert('Propiedad guardada correctamente');
+    }
+
+    async function saveProspecto(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('pros-edit-index').value);
+      const prosData = {
+        nombre: document.getElementById('pros-nombre').value,
+        tel: document.getElementById('pros-tel').value,
+        email: document.getElementById('pros-email').value,
+        inmueble: document.getElementById('pros-inmueble').value,
+        presupuesto: document.getElementById('pros-presupuesto').value,
+        estatus: document.getElementById('pros-estatus').value
+      };
+      if(idx >= 0) {
+        dataCache.prospectos[idx] = prosData;
+      } else {
+        dataCache.prospectos.push(prosData);
+      }
+      await saveToCloud();
+      closeModal('modal-prospecto');
+      refreshAllViews();
+      alert('Prospecto guardado en CRM');
+    }
+
+    async function convertirAInquilino(index) {
+      const p = dataCache.prospectos[index];
+      if(!p) return;
+      if(!confirm(`¿Convertir al prospecto "${p.nombre}" en Inquilino asignado a la propiedad ${p.inmueble}? Se registrará con el correo: ${p.email || 'Sin correo'}`)) return;
+
+      const randomPin = Math.floor(1000 + Math.random() * 9000);
+      const newInquilino = {
+        nombre: p.nombre,
+        tel: p.tel,
+        email: p.email || '',
+        inmueble: p.inmueble,
+        pin: randomPin
+      };
+
+      dataCache.inquilinos.push(newInquilino);
+      dataCache.prospectos.splice(index, 1);
+      await saveToCloud();
+      refreshAllViews();
+      alert(`¡Prospecto convertido exitosamente a Inquilino! PIN temporal de acceso: ${randomPin}`);
+      showSection('inquilinos');
+    }
+
+    async function savePropietario(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('pr-edit-index').value);
+      const pin = idx >= 0 ? dataCache.propietarios[idx].pin : Math.floor(1000 + Math.random() * 9000);
+      const prData = {
+        nombre: document.getElementById('pr-nombre').value,
+        tel: document.getElementById('pr-tel').value,
+        email: document.getElementById('pr-email').value,
+        pin: pin
+      };
+      if(idx >= 0) {
+        dataCache.propietarios[idx] = prData;
+      } else {
+        dataCache.propietarios.push(prData);
+      }
+      await saveToCloud();
+      closeModal('modal-propietario');
+      refreshAllViews();
+      alert('Propietario guardado (PIN: ' + pin + ')');
+    }
+
+    async function saveInquilino(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('iq-edit-index').value);
+      const pin = idx >= 0 ? dataCache.inquilinos[idx].pin : Math.floor(1000 + Math.random() * 9000);
+      const iqData = {
+        nombre: document.getElementById('iq-nombre').value,
+        tel: document.getElementById('iq-tel').value,
+        email: document.getElementById('iq-email').value,
+        inmueble: document.getElementById('iq-inmueble').value,
+        pin: pin
+      };
+      if(idx >= 0) {
+        dataCache.inquilinos[idx] = iqData;
+      } else {
+        dataCache.inquilinos.push(iqData);
+      }
+      await saveToCloud();
+      closeModal('modal-inquilino');
+      refreshAllViews();
+      alert('Inquilino guardado (PIN: ' + pin + ')');
+    }
+
+    async function saveEmpleado(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById('emp-edit-index').value);
+      const pin = idx >= 0 ? dataCache.empleados[idx].pin : Math.floor(1000 + Math.random() * 9000);
+      const empData = {
+        nombre: document.getElementById('emp-nombre').value,
+        email: document.getElementById('emp-email').value,
+        division: document.getElementById('emp-division').value,
+        puesto: document.getElementById('emp-puesto').value,
+        tel: document.getElementById('emp-tel').value,
+        pin: pin
+      };
+      if(idx >= 0) {
+        dataCache.empleados[idx] = empData;
+      } else {
+        dataCache.empleados.push(empData);
+      }
+      await saveToCloud();
+      closeModal('modal-empleado');
+      refreshAllViews();
+      alert('Personal guardado (PIN de acceso operativo: ' + pin + ')');
+    }
+
+    async function saveExpediente(e) {
+      e.preventDefault();
+      const docsSubidos = await readFilesAsBase64('exp-files');
+      dataCache.expedientes.push({
+        titulo: document.getElementById('exp-titulo').value,
+        inmueble: document.getElementById('exp-inmueble').value,
+        documentos: docsSubidos,
+        fecha: new Date().toLocaleDateString()
+      });
+      await saveToCloud();
+      closeModal('modal-expediente');
+      refreshAllViews();
+      alert('Expediente digital guardado con sus documentos');
+    }
+
+    async function saveTicket(e) {
+      e.preventDefault();
+      const fotosTicket = await readFilesAsBase64('ticket-files');
+      dataCache.tickets.push({
+        inmueble: document.getElementById('ticket-inmueble').value,
+        desc: document.getElementById('ticket-desc').value,
+        fotos: fotosTicket.map(f => f.url),
+        estatus: 'Pendiente',
+        fecha: new Date().toLocaleDateString()
+      });
+      await saveToCloud();
+      closeModal('modal-ticket');
+      refreshAllViews();
+      alert('Reporte levantado con éxito en Zenil Soluciones');
+    }
+
+    async function savePago(e) {
+      e.preventDefault();
+      const flujo = document.getElementById('pago-flujo').value;
+      const monto = document.getElementById('pago-monto').value;
+      const inmuebleClave = document.getElementById('pago-inmueble').value;
+      
+      const propObj = dataCache.propiedades.find(p => p.clave === inmuebleClave);
+
+      let pagoData = {
+        tipoFlujo: flujo,
+        fecha: document.getElementById('pago-fecha').value,
+        inmueble: inmuebleClave,
+        propietarioEmail: propObj ? propObj.propietarioEmail : '',
+        concepto: document.getElementById('pago-concepto').value,
+        monto: monto,
+        estatus: document.getElementById('pago-estatus').value
+      };
+
+      if (flujo === 'Salida') {
+        const pct = parseFloat(document.getElementById('pago-comision-pct').value) || 0;
+        const montoNum = parseFloat(monto) || 0;
+        const comisionMonto = (montoNum * pct) / 100;
+        
+        let mantenimientoMonto = 0;
+        if (propObj && propObj.mantenimiento && parseFloat(propObj.mantenimiento) > 0 && propObj.mantTipo === 'Incluido en la renta') {
+          mantenimientoMonto = parseFloat(propObj.mantenimiento) || 0;
+        }
+
+        const netoPropietario = montoNum - comisionMonto - mantenimientoMonto;
+        
+        pagoData.comisionPct = pct;
+        pagoData.comisionMonto = comisionMonto;
+        pagoData.mantenimientoMonto = mantenimientoMonto;
+        pagoData.netoPropietario = netoPropietario;
+      }
+
+      dataCache.pagos.push(pagoData);
+      await saveToCloud();
+      closeModal('modal-pago');
+      refreshAllViews();
+      alert('Movimiento de cobranza guardado');
+    }
+
+    // --- ACCIONES DE ELIMINACIÓN ---
+    async function deletePropiedad(index) {
+      if(confirm('¿Eliminar esta propiedad?')) {
+        dataCache.propiedades.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deleteProspecto(index) {
+      if(confirm('¿Eliminar este prospecto?')) {
+        dataCache.prospectos.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deletePropietario(index) {
+      if(confirm('¿Eliminar este propietario?')) {
+        dataCache.propietarios.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deleteInquilino(index) {
+      if(confirm('¿Eliminar este inquilino?')) {
+        dataCache.inquilinos.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deleteEmpleado(index) {
+      if(confirm('¿Eliminar este empleado?')) {
+        dataCache.empleados.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deleteExpediente(index) {
+      if(confirm('¿Eliminar este expediente?')) {
+        dataCache.expedientes.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deleteTicket(index) {
+      if(confirm('¿Eliminar este ticket?')) {
+        dataCache.tickets.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+    async function deletePago(index) {
+      if(confirm('¿Eliminar este pago?')) {
+        dataCache.pagos.splice(index, 1);
+        await saveToCloud();
+        refreshAllViews();
+      }
+    }
+
+    // --- RENDERIZADO ---
+    function renderPropiedades() {
+      let propsAMostrar = dataCache.propiedades;
+      const btnNuevaProp = document.getElementById('btn-nueva-prop');
+
+      if (currentUser && currentUser.role === 'propietario') {
+        if (btnNuevaProp) btnNuevaProp.style.display = 'none';
+        document.getElementById('propiedades-header-title').innerText = 'Mis Propiedades — ' + currentUser.name;
+        propsAMostrar = getPropietarioPropiedades(currentUser);
+      } else {
+        if (btnNuevaProp) btnNuevaProp.style.display = 'flex';
+        document.getElementById('propiedades-header-title').innerText = 'Zenil Realty — Inventario';
+      }
+
+      document.getElementById('grid-propiedades').innerHTML = propsAMostrar.map((p) => {
+        const realIndex = dataCache.propiedades.indexOf(p);
+        const fotosList = p.fotos && p.fotos.length > 0 ? p.fotos : ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80'];
+        
+        let fotosHtml = `<img src="${fotosList[0]}" alt="Inmueble" class="w-full h-40 object-cover">`;
+        if(fotosList.length > 1) {
+          fotosHtml += `<div class="flex gap-1 p-2 overflow-x-auto bg-zinc-50 border-t">${fotosList.map(f=>`<img src="${f}" class="w-12 h-12 object-cover rounded border">`).join('')}</div>`;
+        }
+
+        const mantMxn = p.mantenimiento && parseFloat(p.mantenimiento) > 0 ? `<p class="text-xs text-zinc-600 font-medium">Mantenimiento: <span class="font-bold text-zinc-800">$${Number(p.mantenimiento).toLocaleString()} MXN</span> <span class="block text-[10px] text-amber-700 font-bold">(${p.mantTipo || 'Incluido en la renta'})</span></p>` : '';
+
+        const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+        const managementControls = canManage ? `
+          <div class="flex justify-end gap-2 pt-2 border-t mt-2">
+            <button onclick="openModal('modal-propiedad', ${realIndex})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded"><i class="fa-solid fa-pen"></i> Editar</button>
+            <button onclick="deletePropiedad(${realIndex})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i> Eliminar</button>
+          </div>
+        ` : '';
+
+        return `
+          <div class="bg-white rounded-2xl border overflow-hidden shadow-sm space-y-2 pb-4">
+            ${fotosHtml}
+            <div class="px-4 space-y-1">
+              <div class="flex justify-between items-center">
+                <h4 class="font-bold">${p.clave} — ${p.titulo}</h4>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 bg-amber-50 text-amber-800 rounded-full">${p.division || 'Zenil Realty'}</span>
+              </div>
+              <p class="text-amber-600 font-extrabold text-base">$${Number(p.precio).toLocaleString()} MXN <span class="text-[11px] font-normal text-zinc-500">/ mes</span></p>
+              ${mantMxn}
+              <p class="text-xs text-zinc-500">Propietario: ${p.propietario}</p>
+              <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded inline-block">${p.estatus}</span>
+              ${managementControls}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="text-zinc-400 text-xs col-span-full">Sin propiedades asignadas o registradas.</div>';
+    }
+
+    function renderProspectos() {
+      if (currentUser && currentUser.role === 'inquilino') return;
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      
+      document.getElementById('table-prospectos').innerHTML = dataCache.prospectos.map((pros, idx) => {
+        let estatusBadge = 'bg-blue-100 text-blue-800';
+        if (pros.estatus === 'Contactado') estatusBadge = 'bg-purple-100 text-purple-800';
+        if (pros.estatus === 'Cita Agendada') estatusBadge = 'bg-amber-100 text-amber-800';
+        if (pros.estatus === 'En Proceso') estatusBadge = 'bg-emerald-100 text-emerald-800';
+        if (pros.estatus === 'Descartado') estatusBadge = 'bg-zinc-100 text-zinc-500';
+
+        let convertBtn = '';
+        if (canManage && pros.estatus !== 'Descartado') {
+          convertBtn = `<button onclick="convertirAInquilino(${idx})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded mr-1" title="Dar de alta como Inquilino"><i class="fa-solid fa-user-check mr-1"></i> Convertir</button>`;
+        }
+
+        return `
+          <tr class="border-b hover:bg-zinc-50">
+            <td class="p-3 font-bold">${pros.nombre}</td>
+            <td class="p-3">${pros.tel}</td>
+            <td class="p-3">${pros.email || '<span class="text-zinc-400">N/A</span>'}</td>
+            <td class="p-3 font-semibold text-amber-600">${pros.inmueble}</td>
+            <td class="p-3 font-bold text-zinc-800">$${Number(pros.presupuesto).toLocaleString()} MXN</td>
+            <td class="p-3"><span class="px-2 py-0.5 ${estatusBadge} text-xs font-bold rounded-full">${pros.estatus}</span></td>
+            <td class="p-3 text-right">
+              ${convertBtn}
+              ${canManage ? `
+                <button onclick="openModal('modal-prospecto', ${idx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded mr-1"><i class="fa-solid fa-pen"></i> Editar</button>
+                <button onclick="deleteProspecto(${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i></button>
+              ` : '<span class="text-xs text-zinc-400">Sólo lectura</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="7" class="p-4 text-center text-zinc-400 text-xs">Sin prospectos registrados en el CRM.</td></tr>';
+    }
+
+    function renderPropietarios() {
+      if (currentUser && currentUser.role === 'inquilino') return;
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('table-propietarios').innerHTML = dataCache.propietarios.map((pr, idx) => `
+        <tr class="border-b">
+          <td class="p-3 font-bold">${pr.nombre}</td>
+          <td class="p-3">${pr.tel}</td>
+          <td class="p-3">${pr.email}</td>
+          <td class="p-3 font-mono font-bold text-amber-600">${pr.pin}</td>
+          <td class="p-3 text-right">
+            ${canManage ? `
+              <button onclick="openModal('modal-propietario', ${idx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded mr-1"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button onclick="deletePropietario(${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i> Eliminar</button>
+            ` : '<span class="text-xs text-zinc-400">Sólo lectura</span>'}
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" class="p-4 text-center text-zinc-400 text-xs">Sin propietarios registrados.</td></tr>';
+    }
+
+    function renderInquilinos() {
+      if (currentUser && currentUser.role === 'inquilino') return;
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('table-inquilinos').innerHTML = dataCache.inquilinos.map((iq, idx) => `
+        <tr class="border-b">
+          <td class="p-3 font-bold">${iq.nombre}</td>
+          <td class="p-3">${iq.tel}</td>
+          <td class="p-3">${iq.email || 'N/A'}</td>
+          <td class="p-3 font-bold text-amber-600">${iq.inmueble}</td>
+          <td class="p-3 font-mono font-bold text-amber-600">${iq.pin}</td>
+          <td class="p-3 text-right">
+            ${canManage ? `
+              <button onclick="openModal('modal-inquilino', ${idx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded mr-1"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button onclick="deleteInquilino(${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i> Eliminar</button>
+            ` : '<span class="text-xs text-zinc-400">Sólo lectura</span>'}
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6" class="p-4 text-center text-zinc-400 text-xs">Sin inquilinos registrados.</td></tr>';
+    }
+
+    function renderEmpleados() {
+      if (currentUser && currentUser.role === 'inquilino') return;
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('table-empleados').innerHTML = dataCache.empleados.map((emp, idx) => `
+        <tr class="border-b">
+          <td class="p-3 font-bold">${emp.nombre}</td>
+          <td class="p-3"><span class="px-2 py-1 bg-amber-50 text-amber-800 text-xs font-bold rounded">${emp.division}</span></td>
+          <td class="p-3">${emp.puesto}</td>
+          <td class="p-3">${emp.tel}</td>
+          <td class="p-3 font-mono font-bold text-amber-600">${emp.pin || '----'}</td>
+          <td class="p-3 text-right">
+            ${canManage ? `
+              <button onclick="openModal('modal-empleado', ${idx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded mr-1"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button onclick="deleteEmpleado(${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i> Eliminar</button>
+            ` : '<span class="text-xs text-zinc-400">Sólo lectura</span>'}
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6" class="p-4 text-center text-zinc-400 text-xs">Sin personal registrado.</td></tr>';
+    }
+
+    function renderExpedientes() {
+      let expsAMostrar = dataCache.expedientes || [];
+      if (currentUser && currentUser.role === 'propietario') {
+        const propsDelPropietario = getPropietarioPropiedades(currentUser);
+        const clavesPropietario = propsDelPropietario.map(p => p.clave);
+        expsAMostrar = expsAMostrar.filter(ex => clavesPropietario.includes(ex.inmueble));
+      }
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('grid-expedientes').innerHTML = expsAMostrar.map((ex, idx) => {
+        let docsHtml = '';
+        if(ex.documentos && ex.documentos.length > 0) {
+          docsHtml = `<div class="space-y-1 mt-2">${ex.documentos.map(d => `<a href="${d.url}" target="_blank" download="${d.name}" class="block text-xs font-bold text-blue-600 hover:underline truncate"><i class="fa-solid fa-file-arrow-down mr-1"></i> ${d.name}</a>`).join('')}</div>`;
+        }
+        return `
+          <div class="bg-white rounded-2xl border p-4 shadow-sm space-y-2">
+            <h4 class="font-bold text-sm text-zinc-900">${ex.titulo}</h4>
+            <p class="text-xs text-amber-600 font-bold">Inmueble: ${ex.inmueble}</p>
+            <p class="text-xs text-zinc-500">Fecha: ${ex.fecha}</p>
+            ${docsHtml}
+            <div class="flex justify-end pt-2 border-t">
+              ${canManage ? `<button onclick="deleteExpediente(${idx})" class="text-rose-600 text-xs font-bold"><i class="fa-solid fa-trash"></i> Eliminar</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="text-zinc-400 text-xs col-span-full">Sin expedientes digitales registrados.</div>';
+    }
+    
+    function renderTickets() {
+      let ticketsAMostrar = dataCache.tickets || [];
+      if (currentUser && currentUser.role === 'propietario') {
+        const propsDelPropietario = getPropietarioPropiedades(currentUser);
+        const clavesPropietario = propsDelPropietario.map(p => p.clave);
+        ticketsAMostrar = ticketsAMostrar.filter(t => clavesPropietario.includes(t.inmueble));
+      } else if (currentUser && currentUser.role === 'inquilino') {
+        const inqObj = dataCache.inquilinos.find(iq => normalizeStr(iq.nombre) === normalizeStr(currentUser.name));
+        const claveInq = inqObj ? inqObj.inmueble : '';
+        ticketsAMostrar = ticketsAMostrar.filter(t => t.inmueble === claveInq);
+      }
+
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('mantenimiento-list').innerHTML = ticketsAMostrar.map((t) => {
+        const realIdx = dataCache.tickets.indexOf(t);
+        let fotosHtml = '';
+        if(t.fotos && t.fotos.length > 0) {
+          fotosHtml = `<div class="flex gap-2 overflow-x-auto mt-2">${t.fotos.map(f => `<img src="${f}" class="w-20 h-20 object-cover rounded-lg border">`).join('')}</div>`;
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-bold text-sm text-zinc-900">Inmueble: ${t.inmueble}</h4>
+                <p class="text-xs text-zinc-600 mt-1">${t.desc}</p>
+              </div>
+              <span class="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded">${t.estatus}</span>
+            </div>
+            ${fotosHtml}
+            <div class="flex justify-between items-center text-xs text-zinc-400 pt-2 border-t">
+              <span>${t.fecha || ''}</span>
+              ${canManage ? `<button onclick="deleteTicket(${realIdx})" class="text-rose-600 font-bold"><i class="fa-solid fa-trash"></i> Eliminar</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="text-zinc-400 text-xs text-center">Sin tickets registrados.</div>';
+    }
+
+    function renderPagos() {
+      let pagosAMostrar = dataCache.pagos || [];
+      const btnRegPago = document.getElementById('btn-registrar-pago');
+      const headerTitle = document.getElementById('cobranza-header-title');
+
+      if (currentUser && currentUser.role !== 'admin' && currentUser.role !== 'operador') {
+        if (btnRegPago) btnRegPago.style.display = 'none';
+
+        if (currentUser.role === 'inquilino') {
+          headerTitle.innerText = 'Mis Pagos de Renta';
+          const inqObj = dataCache.inquilinos.find(iq => normalizeStr(iq.nombre) === normalizeStr(currentUser.name));
+          const claveInq = inqObj ? inqObj.inmueble : '';
+          pagosAMostrar = pagosAMostrar.filter(pg => pg.inmueble === claveInq && pg.tipoFlujo === 'Entrada');
+        } else if (currentUser.role === 'propietario') {
+          headerTitle.innerText = 'Mis Liquidaciones (Salidas)';
+          const userEmail = normalizeStr(currentUser.email);
+          const userName = normalizeStr(currentUser.name);
+          const propsDelPropietario = getPropietarioPropiedades(currentUser);
+          const clavesPropietario = propsDelPropietario.map(p => p.clave);
+
+          pagosAMostrar = pagosAMostrar.filter(pg => {
+            if (pg.tipoFlujo !== 'Salida') return false;
+            const pgEmail = normalizeStr(pg.propietarioEmail);
+            if (pgEmail && userEmail) {
+              return pgEmail === userEmail;
+            }
+            const prop = dataCache.propiedades.find(p => p.clave === pg.inmueble);
+            if (prop) {
+              const propEmail = normalizeStr(prop.propietarioEmail);
+              const propName = normalizeStr(prop.propietario);
+              if (propEmail && userEmail) return propEmail === userEmail;
+              if (propName && userName) return propName === userName;
+            }
+            return clavesPropietario.includes(pg.inmueble);
+          });
+        }
+      } else {
+        if (btnRegPago) btnRegPago.style.display = 'flex';
+        headerTitle.innerText = 'Cobranza y Pagos';
+      }
+
+      const canManage = (currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador'));
+      document.getElementById('table-pagos').innerHTML = pagosAMostrar.map((pg) => {
+        const realIdx = dataCache.pagos.indexOf(pg);
+        let montoDisplay = `$${Number(pg.monto).toLocaleString()} MXN`;
+        if (pg.tipoFlujo === 'Salida' && pg.netoPropietario !== undefined) {
+          montoDisplay = `$${Number(pg.netoPropietario).toLocaleString()} MXN <span class="block text-[10px] text-amber-600 font-semibold">(Bruto: $${Number(pg.monto).toLocaleString()})</span>`;
+        }
+
+        let accionesHtml = `<button onclick="verRecibo(${realIdx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2.5 py-1 bg-amber-50 rounded"><i class="fa-solid fa-print"></i> Ver / Imprimir Recibo</button>`;
+        if (canManage) {
+          accionesHtml += ` <button onclick="deletePago(${realIdx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2.5 py-1 bg-rose-50 rounded ml-1"><i class="fa-solid fa-trash"></i></button>`;
+        }
+        return `
+          <tr class="border-b">
+            <td class="p-3 font-bold">${pg.tipoFlujo || 'Entrada'}</td>
+            <td class="p-3">${pg.fecha || 'N/A'}</td>
+            <td class="p-3 font-bold text-amber-600">${pg.inmueble}</td>
+            <td class="p-3">${pg.concepto}</td>
+            <td class="p-3 font-bold">${montoDisplay}</td>
+            <td class="p-3"><span class="px-2 py-1 bg-zinc-100 text-zinc-800 text-xs font-bold rounded">${pg.estatus}</span></td>
+            <td class="p-3 text-right">${accionesHtml}</td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="7" class="p-4 text-center text-zinc-400 text-xs">Sin registros de pagos o liquidaciones.</td></tr>';
+    }
   </script>
 </body>
 </html>
