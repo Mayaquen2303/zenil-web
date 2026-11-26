@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenil Grupo | Portal y CRM Inmobiliario</title>
+  <title>Zenil Grupo | Portal y Gestión Inmobiliaria</title>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     :root {
@@ -16,8 +16,8 @@
       --text-main: #ffffff;
       --text-muted: #b3b3bd;
       --border-subtle: rgba(255, 255, 255, 0.1);
+      --danger: #ef4444;
       --success: #22c55e;
-      --warning: #f59e0b;
     }
 
     * {
@@ -75,6 +75,7 @@
     nav {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
     }
 
@@ -98,6 +99,11 @@
       background: var(--gold);
       color: #0b0b0d;
       border-color: var(--gold);
+    }
+
+    .tab-btn-lock {
+      border-color: var(--gold-border);
+      color: var(--gold);
     }
 
     main {
@@ -186,6 +192,12 @@
       border: 1px solid var(--border-subtle);
     }
 
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
     .kpi-box {
       background: var(--bg-elevated);
       border: 1px solid var(--gold-border);
@@ -215,7 +227,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .item-row {
@@ -244,6 +256,20 @@
       color: var(--text-muted);
       font-size: 0.86rem;
     }
+
+    .staff-banner {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
   </style>
 </head>
 <body>
@@ -257,14 +283,24 @@
     </div>
     <nav>
       <button class="tab-btn active" data-tab="portal" onclick="switchTab('portal')">Portal Propietarios / Inquilinos</button>
-      <button class="tab-btn" data-tab="crm-rentas" onclick="switchTab('crm-rentas')">CRM Rentas</button>
-      <button class="tab-btn" data-tab="ventas" onclick="switchTab('ventas')">Módulo Ventas</button>
-      <button class="tab-btn" data-tab="seguridad" onclick="switchTab('seguridad')">Seguridad y OTP</button>
+      <button id="navStaffLoginBtn" class="tab-btn tab-btn-lock" data-tab="staff-login" onclick="switchTab('staff-login')">Acceso Interno</button>
+      <button id="navCrmRentas" class="tab-btn hidden" data-tab="crm-rentas" onclick="switchTab('crm-rentas')">CRM Rentas</button>
+      <button id="navVentas" class="tab-btn hidden" data-tab="ventas" onclick="switchTab('ventas')">Módulo Ventas</button>
+      <button id="navSeguridad" class="tab-btn hidden" data-tab="seguridad" onclick="switchTab('seguridad')">Seguridad y OTP</button>
     </nav>
   </header>
 
   <main>
-    <!-- PESTAÑA 1: PORTAL PROPIETARIOS E INQUILINOS -->
+    <!-- BARRA DE SESIÓN INTERNA ACTIVA -->
+    <div id="staffActiveBanner" class="staff-banner hidden">
+      <div>
+        <strong style="color: var(--gold);">Sesión interna autorizada:</strong>
+        <span id="staffActiveUserLabel"></span>
+      </div>
+      <button class="btn btn-danger" onclick="logoutStaff()">Cerrar sesión interna y bloquear módulos</button>
+    </div>
+
+    <!-- PESTAÑA 1: PORTAL PROPIETARIOS E INQUILINOS (PÚBLICO CON VALIDACIÓN) -->
     <section id="tab-portal" class="tab-section">
       <div class="card card-gold">
         <h1>Acceso Seguro para Propietarios e Inquilinos</h1>
@@ -279,7 +315,7 @@
             <input type="password" id="portalSecret" placeholder="Ingresa tu clave" />
 
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="btn" onclick="requestOtp('portal')">Enviar código OTP</button>
+              <button class="btn" onclick="requestPortalOtp()">Enviar código OTP</button>
               <button class="btn btn-secondary" onclick="verifyPortalAccess()">Entrar con código</button>
             </div>
           </div>
@@ -293,6 +329,9 @@
               <option value="ZR-001">ZR-001 · Casa Renta · Planta Baja y 1er Nivel</option>
               <option value="ZR-002">ZR-002 · Departamento Renta · 1er Nivel</option>
               <option value="ZR-003">ZR-003 · Local Comercial · Planta Baja</option>
+              <option value="ZR-004">ZR-004 · Unidad Renta · 2do Nivel</option>
+              <option value="ZR-005">ZR-005 · Propiedad Renta</option>
+              <option value="ZR-006">ZR-006 · Propiedad Renta</option>
             </select>
 
             <div id="portalStatus" class="status-msg hidden"></div>
@@ -305,7 +344,7 @@
               <h2 id="portalPropTitle">Propiedad</h2>
               <p id="portalUserSummary" style="margin-bottom: 0;"></p>
             </div>
-            <button class="btn btn-secondary" onclick="logoutPortal()">Cerrar sesión segura</button>
+            <button class="btn btn-secondary" onclick="logoutPortal()">Cerrar sesión</button>
           </div>
 
           <div class="grid-3" style="margin-bottom: 18px;">
@@ -325,23 +364,49 @@
 
           <div class="card" style="margin-bottom: 0;">
             <h3>Resumen de Actividad de la Propiedad</h3>
-            <p id="portalActivityText">Sin datos personales de prospectos visibles por política de privacidad de Zenil Grupo.</p>
+            <p id="portalActivityText">Por política de privacidad de Zenil Grupo, los datos personales de contacto de prospectos son confidenciales y se muestran únicamente métricas agregadas.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PESTAÑA 2: CRM RENTAS CON SEGUIMIENTO -->
+    <!-- PANTALLA DE ACCESO INTERNO (COMPUERTA PARA CRM, VENTAS Y CONFIGURACIÓN) -->
+    <section id="tab-staff-login" class="tab-section hidden">
+      <div class="card card-gold" style="max-width: 640px; margin: 0 auto;">
+        <h2>Acceso Restringido · Dirección y Equipo Zenil Grupo</h2>
+        <p>Los módulos de CRM Rentas, Ventas y Configuración están protegidos. Valida tu identidad con clave SHA-256 y código OTP para desbloquearlos.</p>
+
+        <label for="staffEmail">Correo autorizado del equipo</label>
+        <input type="email" id="staffEmail" placeholder="direccion@zenilgrupo.com" />
+
+        <label for="staffPassword">Clave interna de acceso</label>
+        <input type="password" id="staffPassword" placeholder="Ingresa la clave interna" />
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+          <button class="btn" onclick="requestStaffOtp()">1. Validar clave y enviar OTP</button>
+        </div>
+
+        <label for="staffOtpInput">Código OTP recibido (6 dígitos)</label>
+        <input type="text" id="staffOtpInput" maxlength="6" placeholder="123456" />
+
+        <button class="btn btn-secondary" onclick="verifyStaffLogin()">2. Desbloquear paneles internos</button>
+        <div id="staffLoginStatus" class="status-msg hidden"></div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 2: CRM RENTAS CON SEGUIMIENTO (SOLO INTERNO) -->
     <section id="tab-crm-rentas" class="tab-section hidden">
       <div class="grid-2">
         <div class="card card-gold">
           <h2>Registrar o Actualizar Prospecto de Renta</h2>
-          <label for="rentaPropCode">Clave de propiedad</label>
+          <label for="rentaPropCode">Propiedad de interés</label>
           <select id="rentaPropCode">
             <option value="ZR-001">ZR-001 · Planta Baja y 1er Nivel</option>
             <option value="ZR-002">ZR-002 · 1er Nivel</option>
             <option value="ZR-003">ZR-003 · Planta Baja</option>
             <option value="ZR-004">ZR-004 · 2do Nivel</option>
+            <option value="ZR-005">ZR-005 · Propiedad Renta</option>
+            <option value="ZR-006">ZR-006 · Propiedad Renta</option>
           </select>
 
           <label for="prospectName">Nombre del prospecto</label>
@@ -356,10 +421,10 @@
             <option value="Cerrado en renta">Cerrado en renta</option>
           </select>
 
-          <label for="visitDate">Fecha de visita o próximo seguimiento</label>
-          <input type="date" id="visitDate" />
+          <label for="nextFollowUpDate">Fecha de próximo seguimiento</label>
+          <input type="date" id="nextFollowUpDate" />
 
-          <label for="followUpNote">Nota de visita u observaciones</label>
+          <label for="followUpNote">Observaciones de seguimiento</label>
           <textarea id="followUpNote" rows="3" placeholder="Ej. Recorrió planta baja y 1er nivel; solicitó requisitos de renta..."></textarea>
 
           <button class="btn" onclick="saveRentalLead()">Guardar en CRM de Rentas</button>
@@ -368,13 +433,13 @@
 
         <div class="card">
           <h2>Seguimiento y Visitas Registradas</h2>
-          <p>Historial de prospectos y visitas con registro de fecha y nota.</p>
+          <p>Historial de prospectos con fecha de próximo seguimiento y observaciones.</p>
           <div id="rentalLeadsList"></div>
         </div>
       </div>
     </section>
 
-    <!-- PESTAÑA 3: MÓDULO VENTAS (PROPIEDADES Y PROSPECTOS DE VENTA) -->
+    <!-- PESTAÑA 3: MÓDULO VENTAS (SOLO INTERNO) -->
     <section id="tab-ventas" class="tab-section hidden">
       <div class="grid-2">
         <div class="card card-gold">
@@ -400,18 +465,18 @@
 
         <div class="card">
           <h2>Cartera y Prospectos de Venta</h2>
-          <p>Registro separado de rentas para control de operaciones comerciales.</p>
+          <p>Registro independiente de rentas para operaciones de compraventa.</p>
           <div id="salesRecordsList"></div>
         </div>
       </div>
     </section>
 
-    <!-- PESTAÑA 4: SEGURIDAD SHA-256 Y EMAILJS OTP -->
+    <!-- PESTAÑA 4: SEGURIDAD SHA-256 Y EMAILJS OTP (SOLO INTERNO) -->
     <section id="tab-seguridad" class="tab-section hidden">
       <div class="grid-2">
         <div class="card card-gold">
-          <h2>Configuración de EmailJS y Logotipo</h2>
-          <p>Define aquí tus claves de EmailJS y verifica la ruta del logotipo oficial de Zenil Grupo.</p>
+          <h2>Configuración de EmailJS, Logotipo y Clave Interna</h2>
+          <p>Administra tus credenciales de EmailJS, la ruta del logotipo y el hash SHA-256 de acceso interno.</p>
 
           <label for="cfgLogoPath">Ruta del logotipo</label>
           <input type="text" id="cfgLogoPath" value="./logo-zenilg.png" />
@@ -425,16 +490,19 @@
           <label for="cfgPublicKey">EmailJS Public Key</label>
           <input type="text" id="cfgPublicKey" placeholder="Tu Public Key de EmailJS" />
 
+          <label for="cfgStaffHash">Hash SHA-256 autorizado para Acceso Interno</label>
+          <input type="text" id="cfgStaffHash" />
+
           <button class="btn" onclick="saveSecurityConfig()">Guardar configuración</button>
           <div id="secConfigStatus" class="status-msg hidden"></div>
         </div>
 
         <div class="card">
-          <h2>Generador de Hash SHA-256 para Claves</h2>
-          <p>Genera el hash SHA-256 de una clave de acceso para proteger credenciales sin guardar texto plano.</p>
+          <h2>Generador de Hash SHA-256 para Nuevas Claves</h2>
+          <p>Calcula el hash SHA-256 de una clave nueva y cópialo al campo izquierdo para actualizar la clave interna.</p>
 
-          <label for="rawPassInput">Clave a cifrar</label>
-          <input type="text" id="rawPassInput" placeholder="Escribe una clave de prueba" />
+          <label for="rawPassInput">Nueva clave a cifrar</label>
+          <input type="password" id="rawPassInput" placeholder="Escribe la nueva clave" />
 
           <button class="btn btn-secondary" onclick="generateHashPreview()">Calcular SHA-256</button>
 
@@ -447,28 +515,62 @@
 
   <script>
     const STORAGE_KEYS = {
-      config: "zenil_grupo_config_v1",
-      rentalLeads: "zenil_grupo_rental_leads_v1",
-      saleRecords: "zenil_grupo_sale_records_v1"
+      config: "zenil_grupo_config_v2",
+      rentalLeads: "zenil_grupo_rental_leads_v2",
+      saleRecords: "zenil_grupo_sale_records_v2",
+      staffSession: "zenil_grupo_staff_session_v1"
     };
+
+    // Hash SHA-256 inicial correspondiente a "Zenil2026#"
+    const DEFAULT_STAFF_HASH = "e33d8a30b20d52b633c616117f23210b3058d354f2592c3e2680015055f23366";
 
     const PROPERTY_METRICS = {
       "ZR-001": { name: "ZR-001 · Casa Renta (Planta Baja y 1er Nivel)", week: 4, month: 14, status: "Disponible" },
       "ZR-002": { name: "ZR-002 · Departamento Renta (1er Nivel)", week: 2, month: 9, status: "Disponible" },
       "ZR-003": { name: "ZR-003 · Local Comercial (Planta Baja)", week: 3, month: 11, status: "Disponible" },
-      "ZR-004": { name: "ZR-004 · Unidad Renta (2do Nivel)", week: 1, month: 6, status: "Disponible" }
+      "ZR-004": { name: "ZR-004 · Unidad Renta (2do Nivel)", week: 1, month: 6, status: "Disponible" },
+      "ZR-005": { name: "ZR-005 · Propiedad Renta", week: 2, month: 7, status: "Disponible" },
+      "ZR-006": { name: "ZR-006 · Propiedad Renta", week: 1, month: 5, status: "Disponible" }
     };
 
-    let activeOtpSession = null;
+    const INTERNAL_TABS = ["crm-rentas", "ventas", "seguridad"];
+    let activePortalOtp = null;
+    let activeStaffOtp = null;
 
     function loadConfig() {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.config) || "{}");
       return {
         logoPath: saved.logoPath || "./logo-zenilg.png",
-        serviceId: saved.serviceId || "service_v1u1tjb",
-        templateId: saved.templateId || "template_ormrnb5",
-        publicKey: saved.publicKey || "Xm-X2Ye7HnvycN1tZ"
+        serviceId: saved.serviceId || "",
+        templateId: saved.templateId || "",
+        publicKey: saved.publicKey || "",
+        staffHash: saved.staffHash || DEFAULT_STAFF_HASH
       };
+    }
+
+    function isStaffAuthenticated() {
+      const session = JSON.parse(sessionStorage.getItem(STORAGE_KEYS.staffSession) || "null");
+      if (!session || !session.email || !session.expiresAt) return false;
+      if (Date.now() > session.expiresAt) {
+        sessionStorage.removeItem(STORAGE_KEYS.staffSession);
+        return false;
+      }
+      return session;
+    }
+
+    function syncStaffUI() {
+      const session = isStaffAuthenticated();
+      const authenticated = Boolean(session);
+
+      document.getElementById("navCrmRentas").classList.toggle("hidden", !authenticated);
+      document.getElementById("navVentas").classList.toggle("hidden", !authenticated);
+      document.getElementById("navSeguridad").classList.toggle("hidden", !authenticated);
+      document.getElementById("navStaffLoginBtn").classList.toggle("hidden", authenticated);
+      document.getElementById("staffActiveBanner").classList.toggle("hidden", !authenticated);
+
+      if (authenticated) {
+        document.getElementById("staffActiveUserLabel").textContent = session.email;
+      }
     }
 
     function applyConfigToUI() {
@@ -478,24 +580,32 @@
       document.getElementById("cfgServiceId").value = cfg.serviceId;
       document.getElementById("cfgTemplateId").value = cfg.templateId;
       document.getElementById("cfgPublicKey").value = cfg.publicKey;
+      document.getElementById("cfgStaffHash").value = cfg.staffHash;
+
       if (cfg.publicKey && window.emailjs) {
         emailjs.init({ publicKey: cfg.publicKey });
       }
     }
 
     function saveSecurityConfig() {
+      if (!isStaffAuthenticated()) return;
       const cfg = {
         logoPath: document.getElementById("cfgLogoPath").value.trim() || "./logo-zenilg.png",
         serviceId: document.getElementById("cfgServiceId").value.trim(),
         templateId: document.getElementById("cfgTemplateId").value.trim(),
-        publicKey: document.getElementById("cfgPublicKey").value.trim()
+        publicKey: document.getElementById("cfgPublicKey").value.trim(),
+        staffHash: document.getElementById("cfgStaffHash").value.trim() || DEFAULT_STAFF_HASH
       };
       localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(cfg));
       applyConfigToUI();
-      showStatus("secConfigStatus", "Configuración guardada y logotipo actualizado.");
+      showStatus("secConfigStatus", "Configuración guardada correctamente.");
     }
 
     function switchTab(tabName) {
+      if (INTERNAL_TABS.includes(tabName) && !isStaffAuthenticated()) {
+        tabName = "staff-login";
+      }
+
       document.querySelectorAll(".tab-section").forEach(sec => sec.classList.add("hidden"));
       document.getElementById(`tab-${tabName}`).classList.remove("hidden");
 
@@ -525,26 +635,7 @@
       el.classList.remove("hidden");
     }
 
-    async function requestOtp(context) {
-      const email = document.getElementById("portalEmail").value.trim();
-      const secret = document.getElementById("portalSecret").value.trim();
-      const propCode = document.getElementById("portalPropertySelect").value;
-
-      if (!email || !secret) {
-        showStatus("portalStatus", "Ingresa tu correo y clave de acceso para solicitar el código OTP.");
-        return;
-      }
-
-      const code = String(Math.floor(100000 + Math.random() * 900000));
-      const secretHash = await sha256Hex(secret);
-      activeOtpSession = {
-        email,
-        propCode,
-        code,
-        secretHash,
-        expiresAt: Date.now() + 10 * 60 * 1000
-      };
-
+    async function sendOtpEmail(email, code, subjectTag) {
       const cfg = loadConfig();
       if (cfg.serviceId && cfg.templateId && cfg.publicKey && window.emailjs) {
         try {
@@ -552,43 +643,73 @@
           await emailjs.send(cfg.serviceId, cfg.templateId, {
             to_email: email,
             otp_code: code,
-            propiedad: propCode
+            propiedad: subjectTag
           });
-          showStatus("portalStatus", `Código OTP enviado por correo a ${email}. Revísalo e ingrésalo para entrar.`);
+          return { sent: true, message: `Código OTP enviado por correo a ${email}.` };
         } catch (err) {
-          showStatus("portalStatus", `No se pudo enviar vía EmailJS (${err?.text || "verifica IDs"}). Código local de prueba: ${code}`);
+          return {
+            sent: false,
+            message: `Error EmailJS (${err?.text || "revisa IDs"}). Código temporal de prueba: ${code}`
+          };
         }
-      } else {
-        showStatus("portalStatus", `EmailJS aún sin configurar. Código local de prueba para ${context}: ${code}`);
       }
+      return {
+        sent: false,
+        message: `EmailJS pendiente de configurar. Código temporal de prueba: ${code}`
+      };
+    }
+
+    // FLUJO PORTAL PROPIETARIOS / INQUILINOS
+    async function requestPortalOtp() {
+      const email = document.getElementById("portalEmail").value.trim();
+      const secret = document.getElementById("portalSecret").value.trim();
+      const propCode = document.getElementById("portalPropertySelect").value;
+
+      if (!email || !secret) {
+        showStatus("portalStatus", "Ingresa tu correo y clave de acceso.");
+        return;
+      }
+
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      const secretHash = await sha256Hex(secret);
+      activePortalOtp = {
+        email,
+        propCode,
+        code,
+        secretHash,
+        expiresAt: Date.now() + 10 * 60 * 1000
+      };
+
+      const res = await sendOtpEmail(email, code, propCode);
+      showStatus("portalStatus", res.message);
     }
 
     async function verifyPortalAccess() {
       const enteredCode = document.getElementById("portalOtpInput").value.trim();
       const currentSecret = document.getElementById("portalSecret").value.trim();
 
-      if (!activeOtpSession) {
-        showStatus("portalStatus", "Primero solicita un código OTP.");
+      if (!activePortalOtp) {
+        showStatus("portalStatus", "Primero solicita tu código OTP.");
         return;
       }
-      if (Date.now() > activeOtpSession.expiresAt) {
+      if (Date.now() > activePortalOtp.expiresAt) {
         showStatus("portalStatus", "El código OTP ha expirado. Solicita uno nuevo.");
         return;
       }
-      if (enteredCode !== activeOtpSession.code) {
-        showStatus("portalStatus", "El código OTP no coincide.");
+      if (enteredCode !== activePortalOtp.code) {
+        showStatus("portalStatus", "El código OTP es incorrecto.");
         return;
       }
 
       const currentHash = await sha256Hex(currentSecret);
-      if (currentHash !== activeOtpSession.secretHash) {
-        showStatus("portalStatus", "La clave no coincide con la sesión iniciada.");
+      if (currentHash !== activePortalOtp.secretHash) {
+        showStatus("portalStatus", "La clave ingresada no coincide.");
         return;
       }
 
-      const metrics = PROPERTY_METRICS[activeOtpSession.propCode] || PROPERTY_METRICS["ZR-001"];
+      const metrics = PROPERTY_METRICS[activePortalOtp.propCode] || PROPERTY_METRICS["ZR-001"];
       document.getElementById("portalPropTitle").textContent = metrics.name;
-      document.getElementById("portalUserSummary").textContent = `Sesión verificada para ${activeOtpSession.email}`;
+      document.getElementById("portalUserSummary").textContent = `Sesión verificada: ${activePortalOtp.email}`;
       document.getElementById("kpiProspectsWeek").textContent = metrics.week;
       document.getElementById("kpiProspectsMonth").textContent = metrics.month;
       document.getElementById("kpiRentStatus").textContent = metrics.status;
@@ -598,22 +719,86 @@
     }
 
     function logoutPortal() {
-      activeOtpSession = null;
+      activePortalOtp = null;
       document.getElementById("portalOtpInput").value = "";
       document.getElementById("portalDashboard").classList.add("hidden");
       document.getElementById("portalLoginBox").classList.remove("hidden");
-      showStatus("portalStatus", "Sesión cerrada correctamente.");
+      showStatus("portalStatus", "Sesión del portal cerrada.");
     }
 
+    // FLUJO ACCESO INTERNO PROTEGIDO
+    async function requestStaffOtp() {
+      const email = document.getElementById("staffEmail").value.trim();
+      const password = document.getElementById("staffPassword").value.trim();
+
+      if (!email || !password) {
+        showStatus("staffLoginStatus", "Ingresa el correo autorizado y la clave interna.");
+        return;
+      }
+
+      const cfg = loadConfig();
+      const inputHash = await sha256Hex(password);
+      if (inputHash !== cfg.staffHash) {
+        showStatus("staffLoginStatus", "Clave interna incorrecta.");
+        return;
+      }
+
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      activeStaffOtp = {
+        email,
+        code,
+        expiresAt: Date.now() + 10 * 60 * 1000
+      };
+
+      const res = await sendOtpEmail(email, code, "Acceso Interno Zenil Grupo");
+      showStatus("staffLoginStatus", res.message);
+    }
+
+    function verifyStaffLogin() {
+      const enteredCode = document.getElementById("staffOtpInput").value.trim();
+      if (!activeStaffOtp) {
+        showStatus("staffLoginStatus", "Primero valida tu clave interna para generar el OTP.");
+        return;
+      }
+      if (Date.now() > activeStaffOtp.expiresAt) {
+        showStatus("staffLoginStatus", "El código OTP expiró. Solicita uno nuevo.");
+        return;
+      }
+      if (enteredCode !== activeStaffOtp.code) {
+        showStatus("staffLoginStatus", "El código OTP no coincide.");
+        return;
+      }
+
+      sessionStorage.setItem(STORAGE_KEYS.staffSession, JSON.stringify({
+        email: activeStaffOtp.email,
+        expiresAt: Date.now() + 4 * 60 * 60 * 1000
+      }));
+
+      activeStaffOtp = null;
+      document.getElementById("staffPassword").value = "";
+      document.getElementById("staffOtpInput").value = "";
+      syncStaffUI();
+      switchTab("crm-rentas");
+    }
+
+    function logoutStaff() {
+      sessionStorage.removeItem(STORAGE_KEYS.staffSession);
+      activeStaffOtp = null;
+      syncStaffUI();
+      switchTab("portal");
+    }
+
+    // CRM RENTAS
     function getRentalLeads() {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.rentalLeads) || "[]");
     }
 
     function saveRentalLead() {
+      if (!isStaffAuthenticated()) return;
       const propCode = document.getElementById("rentaPropCode").value;
       const name = document.getElementById("prospectName").value.trim();
       const stage = document.getElementById("prospectStage").value;
-      const visitDate = document.getElementById("visitDate").value;
+      const nextDate = document.getElementById("nextFollowUpDate").value;
       const note = document.getElementById("followUpNote").value.trim();
 
       if (!name) {
@@ -626,11 +811,12 @@
         item => item.name.toLowerCase() === name.toLowerCase() && item.propCode === propCode
       );
 
-      const entryText = `${visitDate || new Date().toISOString().slice(0, 10)} · [${stage}] ${note || "Actualización de seguimiento"}`;
+      const today = new Date().toISOString().slice(0, 10);
+      const entryText = `${today} · [${stage}]${nextDate ? ` · Próx. seguimiento: ${nextDate}` : ""}${note ? ` · ${note}` : ""}`;
 
       if (existingIndex >= 0) {
         leads[existingIndex].stage = stage;
-        leads[existingIndex].visitDate = visitDate || leads[existingIndex].visitDate;
+        leads[existingIndex].nextDate = nextDate || leads[existingIndex].nextDate;
         leads[existingIndex].history.unshift(entryText);
       } else {
         leads.unshift({
@@ -638,7 +824,7 @@
           propCode,
           name,
           stage,
-          visitDate,
+          nextDate,
           history: [entryText]
         });
       }
@@ -646,7 +832,7 @@
       localStorage.setItem(STORAGE_KEYS.rentalLeads, JSON.stringify(leads));
       document.getElementById("followUpNote").value = "";
       renderRentalLeads();
-      showStatus("rentaStatus", "Prospecto y seguimiento guardados correctamente.");
+      showStatus("rentaStatus", "Prospecto y seguimiento guardados en CRM Rentas.");
     }
 
     function renderRentalLeads() {
@@ -663,6 +849,7 @@
             <strong>${lead.name}</strong>
             <span class="badge">${lead.propCode}</span>
             <span class="badge">${lead.stage}</span>
+            ${lead.nextDate ? `<span class="badge">Próx: ${lead.nextDate}</span>` : ""}
           </div>
           <ul class="history-list">
             ${lead.history.map(h => `<li>${h}</li>`).join("")}
@@ -671,11 +858,13 @@
       `).join("");
     }
 
+    // MÓDULO VENTAS
     function getSaleRecords() {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.saleRecords) || "[]");
     }
 
     function saveSaleRecord() {
+      if (!isStaffAuthenticated()) return;
       const advisor = document.getElementById("saleAdvisor").value.trim();
       const property = document.getElementById("saleProperty").value.trim();
       const price = document.getElementById("salePrice").value.trim();
@@ -726,6 +915,7 @@
     }
 
     applyConfigToUI();
+    syncStaffUI();
     renderRentalLeads();
     renderSaleRecords();
   </script>
