@@ -134,6 +134,41 @@
         <div id="grid-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </section>
 
+      <!-- GALERÍA PROPIEDADES EN VENTA -->
+      <section id="sec-galeria-ventas" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-3 bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <div>
+            <h3 class="text-lg font-bold text-zinc-900">Galería de Propiedades en Venta</h3>
+            <p class="text-xs text-zinc-500">Inventario nacional e internacional (MXN / USD)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="filtro-moneda-venta" onchange="renderGaleriaVentas()" class="px-3 py-2 border rounded-xl text-xs font-bold bg-white">
+              <option value="TODAS">Todas las monedas</option>
+              <option value="MXN">Solo MXN</option>
+              <option value="USD">Solo USD</option>
+            </select>
+            <button onclick="abrirModalVentaProp(-1)" class="bg-black text-amber-400 px-4 py-2 rounded-xl text-xs font-extrabold shadow hover:bg-zinc-900"><i class="fa-solid fa-plus mr-1"></i> Nueva Venta</button>
+          </div>
+        </div>
+        <div id="grid-galeria-ventas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+      <!-- CRM VENTAS -->
+      <section id="sec-ventas" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-3 bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+          <div>
+            <h3 class="text-lg font-bold text-zinc-900">CRM de Ventas</h3>
+            <p class="text-xs text-zinc-500">Seguimiento local y en el extranjero (Embajadores / Redes)</p>
+          </div>
+          <button onclick="abrirModalVentaPros(-1)" class="bg-black text-amber-400 px-4 py-2 rounded-xl text-xs font-extrabold shadow hover:bg-zinc-900"><i class="fa-solid fa-plus mr-1"></i> Prospecto Venta</button>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead><tr class="bg-zinc-50 text-zinc-500 border-b"><th class="p-3">Nombre</th><th class="p-3">Teléfono</th><th class="p-3">Email</th><th class="p-3">Propiedad</th><th class="p-3">Precio</th><th class="p-3">Comisión</th><th class="p-3">Estatus</th><th class="p-3">Próximo Seguimiento</th><th class="p-3">Observaciones</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="table-ventas-prospectos" class="bg-white divide-y divide-zinc-100"></tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- PROSPECTOS (CRM) -->
       <section id="sec-prospectos" class="space-y-6 hidden">
         <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
@@ -515,6 +550,182 @@
     </div>
   </div>
 
+<!-- MODAL PROPIEDAD EN VENTA -->
+<div id="modal-venta-propiedad" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl my-auto">
+    <div class="flex justify-between items-center border-b pb-3">
+      <h3 id="titulo-modal-venta" class="text-lg font-extrabold text-zinc-900">Nueva Propiedad en Venta</h3>
+      <button onclick="closeModal('modal-venta-propiedad')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form onsubmit="saveVentaPropiedad(event)" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Clave</label>
+          <input type="text" id="venta-prop-clave" readonly class="w-full px-4 py-3 border rounded-xl text-sm bg-zinc-100 font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Título / Desarrollo</label>
+          <input type="text" id="venta-prop-titulo" required placeholder="Ej. Zaynya, Puerta Ka'an, Konexto Guadalajara" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">País / Plaza</label>
+          <input type="text" id="venta-prop-pais" required placeholder="Ej. México - Riviera Maya" class="w-full px-4 py-3 border rounded-xl text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Precio</label>
+          <input type="number" id="venta-prop-precio" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Moneda</label>
+          <select id="venta-prop-moneda" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="MXN">MXN — Pesos mexicanos</option>
+            <option value="USD">USD — Dólares</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Estatus</label>
+          <select id="venta-prop-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Disponible">Disponible</option>
+            <option value="En Negociación">En Negociación</option>
+            <option value="Apartada">Apartada</option>
+            <option value="Vendida">Vendida</option>
+            <option value="Cancelada">Cancelada</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Origen</label>
+          <select id="venta-prop-origen" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Embajadores">Embajadores</option>
+            <option value="Redes Sociales">Redes Sociales (TikTok / Facebook)</option>
+            <option value="Página Web">Página Web</option>
+            <option value="Recomendación">Recomendación / Referido</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Comisión % (Opcional)</label>
+          <input type="number" id="venta-prop-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 mb-1">Descripción</label>
+        <textarea id="venta-prop-descripcion" rows="3" placeholder="Descripción breve de la propiedad" class="w-full px-4 py-3 border rounded-xl text-sm"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 mb-1">Fotos de la propiedad</label>
+        <input type="file" id="venta-prop-fotos" accept="image/*" multiple class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+        <div id="venta-edit-photos" class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2"></div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeModal('modal-venta-propiedad')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button>
+        <button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar Propiedad</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL PROSPECTO VENTA -->
+<div id="modal-venta-prospecto" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl my-auto">
+    <div class="flex justify-between items-center border-b pb-3">
+      <h3 id="titulo-modal-venta-prospecto" class="text-lg font-extrabold text-zinc-900">Nuevo Prospecto de Venta</h3>
+      <button onclick="closeModal('modal-venta-prospecto')" class="text-zinc-500 hover:text-black text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form onsubmit="saveVentaProspecto(event)" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Nombre</label>
+          <input type="text" id="venta-pros-nombre" required placeholder="Nombre del prospecto" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Teléfono</label>
+          <input type="text" id="venta-pros-tel" required placeholder="Teléfono / WhatsApp" class="w-full px-4 py-3 border rounded-xl text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Email</label>
+          <input type="email" id="venta-pros-email" placeholder="correo@ejemplo.com" class="w-full px-4 py-3 border rounded-xl text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Propiedad de Interés</label>
+          <select id="venta-pros-inmueble" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Presupuesto</label>
+          <input type="number" id="venta-pros-presupuesto" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Moneda</label>
+          <select id="venta-pros-moneda" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="MXN">MXN — Pesos mexicanos</option>
+            <option value="USD">USD — Dólares</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Forma de Pago</label>
+          <select id="venta-pros-pago" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Contado">Contado</option>
+            <option value="Crédito Hipotecario">Crédito Hipotecario</option>
+            <option value="Crédito Infonavit">Crédito Infonavit</option>
+            <option value="Crédito Bancario">Crédito Bancario</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Estatus</label>
+          <select id="venta-pros-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Contactado">Contactado</option>
+            <option value="Cita Agendada">Cita Agendada</option>
+            <option value="En Proceso">En Proceso</option>
+            <option value="Cierre">Cierre</option>
+            <option value="Descartado">Descartado</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Origen del Dato</label>
+          <select id="venta-pros-origen" class="w-full px-4 py-3 border rounded-xl text-sm bg-white">
+            <option value="Redes Sociales">Redes Sociales (TikTok / Facebook)</option>
+            <option value="Embajadores">Embajadores</option>
+            <option value="Página Web">Página Web</option>
+            <option value="Recomendación">Recomendación / Referido</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-500 mb-1">Comisión % (Opcional)</label>
+          <input type="number" id="venta-pros-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 mb-1">Fecha de Próximo Seguimiento</label>
+        <input type="date" id="venta-pros-fecha-seguimiento" class="w-full px-4 py-3 border rounded-xl text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 mb-1">Observaciones de Seguimiento</label>
+        <textarea id="venta-pros-observaciones" rows="2" placeholder="Notas del seguimiento" class="w-full px-4 py-3 border rounded-xl text-sm"></textarea>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeModal('modal-venta-prospecto')" class="w-1/2 py-3 border rounded-xl font-bold text-sm">Cancelar</button>
+        <button type="submit" class="w-1/2 py-3 bg-black text-amber-400 font-extrabold rounded-xl text-sm">Guardar Prospecto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VISOR DE GALERÍA (VENTAS) -->
+<div id="modal-visor-venta" class="fixed inset-0 bg-black/90 z-[120] hidden flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-3xl flex justify-between items-center mb-3">
+    <h3 id="visor-venta-titulo" class="text-white font-extrabold text-lg"></h3>
+    <button onclick="closeModal('modal-visor-venta')" class="text-white hover:text-amber-400 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <img id="visor-venta-img" src="" alt="Foto de la propiedad" class="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl">
+  <div class="flex items-center gap-3 mt-4">
+    <button id="visor-venta-prev" class="px-4 py-2 bg-white text-black rounded-xl font-bold text-sm">‹ Anterior</button>
+    <span id="visor-venta-contador" class="text-white text-sm font-bold"></span>
+    <button id="visor-venta-next" class="px-4 py-2 bg-white text-black rounded-xl font-bold text-sm">Siguiente ›</button>
+  </div>
+</div>
+
   <!-- SCRIPT -->
   <script>
     const SUPABASE_URL = 'https://molaczplmyhdiacjtzwf.supabase.co';
@@ -529,6 +740,8 @@
     let dataCache = { 
       propiedades: [], 
       prospectos: [],
+      propiedadesVenta: [],
+      prospectosVenta: [],
       propietarios: [], 
       inquilinos: [], 
       empleados: [], 
@@ -570,6 +783,8 @@
     function loadPayload(p) {
       dataCache.propiedades = p.propiedades || [];
       dataCache.prospectos = p.prospectos || [];
+      dataCache.propiedadesVenta = p.propiedadesVenta || [];
+      dataCache.prospectosVenta = p.prospectosVenta || [];
       dataCache.propietarios = p.propietarios || [];
       dataCache.inquilinos = p.inquilinos || [];
       dataCache.empleados = p.empleados || [];
@@ -739,6 +954,8 @@
           <button onclick="showSection('dashboard'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-chart-pie mr-2"></i> Dashboard</button>
           <button onclick="showSection('propiedades'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-building mr-2"></i> Propiedades</button>
           <button onclick="showSection('prospectos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-viewfinder mr-2"></i> Prospectos</button>
+          <button onclick="showSection('galeria-ventas'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-images mr-2"></i> Galería Ventas</button>
+          <button onclick="showSection('ventas'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-handshake mr-2"></i> CRM Ventas</button>
           <button onclick="showSection('propietarios'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-user-tie mr-2"></i> Propietarios</button>
           <button onclick="showSection('inquilinos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-people-roof mr-2"></i> Inquilinos</button>
           <button onclick="showSection('empleados'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-gear mr-2"></i> Personal</button>
@@ -754,6 +971,8 @@
           <button onclick="showSection('dashboard'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-amber-400 bg-zinc-900"><i class="fa-solid fa-chart-pie mr-2"></i> Dashboard</button>
           <button onclick="showSection('propiedades'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-building mr-2"></i> Propiedades</button>
           <button onclick="showSection('prospectos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-viewfinder mr-2"></i> Prospectos</button>
+          <button onclick="showSection('galeria-ventas'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-images mr-2"></i> Galería Ventas</button>
+          <button onclick="showSection('ventas'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-handshake mr-2"></i> CRM Ventas</button>
           <button onclick="showSection('propietarios'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-user-tie mr-2"></i> Propietarios</button>
           <button onclick="showSection('inquilinos'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-people-roof mr-2"></i> Inquilinos</button>
           <button onclick="showSection('empleados'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl font-bold text-zinc-300 hover:bg-zinc-900"><i class="fa-solid fa-users-gear mr-2"></i> Personal</button>
@@ -830,7 +1049,7 @@
       if (currentUser && (currentUser.role === 'inquilino' || currentUser.role === 'propietario') && id === 'dashboard') {
         id = currentUser.role === 'propietario' ? 'propiedades' : 'cobranza';
       }
-      ['dashboard', 'propiedades', 'prospectos', 'propietarios', 'inquilinos', 'empleados', 'expedientes', 'cobranza', 'mantenimiento', 'configuracion'].forEach(s => {
+      ['dashboard', 'propiedades', 'galeria-ventas', 'ventas', 'prospectos', 'propietarios', 'inquilinos', 'empleados', 'expedientes', 'cobranza', 'mantenimiento', 'configuracion'].forEach(s => {
         const el = document.getElementById(`sec-${s}`);
         if(el) el.classList.add('hidden');
       });
@@ -867,6 +1086,8 @@
 
       renderPropiedades(); 
       renderProspectos();
+      renderGaleriaVentas();
+      renderVentasProspectos();
       renderPropietarios(); 
       renderInquilinos(); 
       renderEmpleados(); 
@@ -1365,6 +1586,293 @@
         await saveToCloud();
         refreshAllViews();
       }
+    }
+
+    // --- VENTAS: Galería y CRM (propiedadesVenta / prospectosVenta) ---
+    function canManageVentas() { return !!(currentUser && (currentUser.role === 'admin' || currentUser.role === 'operador')); }
+
+    let ventaEditPhotos = [];
+    function renderVentaEditPhotos() {
+      const cont = document.getElementById('venta-edit-photos');
+      if (!cont) return;
+      if (!ventaEditPhotos.length) {
+        cont.innerHTML = '<p class="text-xs text-zinc-400 col-span-3 sm:col-span-4">Sin fotos seleccionadas. Puedes subir hasta 10 fotos por propiedad.</p>';
+        return;
+      }
+      cont.innerHTML = ventaEditPhotos.map((foto, i) => `
+        <div class="relative group">
+          <img src="${foto}" alt="Foto ${i + 1}" class="w-full h-20 object-cover rounded-lg border">
+          <button type="button" onclick="ventaEditPhotos.splice(${i}, 1); renderVentaEditPhotos();" class="absolute top-1 right-1 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Quitar</button>
+        </div>
+      `).join('');
+    }
+
+    function abrirModalVentaProp(index = -1) {
+      if (!canManageVentas()) return;
+      ventaEditPhotos = [];
+      const titulo = document.getElementById('titulo-modal-venta');
+      if (index >= 0) {
+        const p = dataCache.propiedadesVenta[index];
+        titulo.textContent = 'Editar Propiedad en Venta';
+        document.getElementById('venta-prop-clave').value = p.clave || '';
+        document.getElementById('venta-prop-titulo').value = p.titulo || '';
+        document.getElementById('venta-prop-pais').value = p.pais || '';
+        document.getElementById('venta-prop-precio').value = p.precio || '';
+        document.getElementById('venta-prop-moneda').value = p.moneda || 'MXN';
+        document.getElementById('venta-prop-estatus').value = p.estatus || 'Disponible';
+        document.getElementById('venta-prop-origen').value = p.origen || 'Embajadores';
+        document.getElementById('venta-prop-comision').value = p.comision || '';
+        document.getElementById('venta-prop-descripcion').value = p.descripcion || '';
+        ventaEditPhotos = Array.isArray(p.fotos) ? [...p.fotos] : [];
+        window.ventaPropIndex = index;
+      } else {
+        titulo.textContent = 'Nueva Propiedad en Venta';
+        document.getElementById('venta-prop-clave').value = `ZV-${String(dataCache.propiedadesVenta.length + 1).padStart(3, '0')}`;
+        document.getElementById('venta-prop-titulo').value = '';
+        document.getElementById('venta-prop-pais').value = '';
+        document.getElementById('venta-prop-precio').value = '';
+        document.getElementById('venta-prop-moneda').value = 'MXN';
+        document.getElementById('venta-prop-estatus').value = 'Disponible';
+        document.getElementById('venta-prop-origen').value = 'Embajadores';
+        document.getElementById('venta-prop-comision').value = '';
+        document.getElementById('venta-prop-descripcion').value = '';
+        window.ventaPropIndex = -1;
+      }
+      document.getElementById('venta-prop-fotos').value = '';
+      renderVentaEditPhotos();
+      openModal('modal-venta-propiedad');
+    }
+
+    async function saveVentaPropiedad(e) {
+      e.preventDefault();
+      const fotosInput = document.getElementById('venta-prop-fotos');
+      const nuevasFotos = fotosInput && fotosInput.files ? Array.from(fotosInput.files).slice(0, 10) : [];
+      const nuevasFotosBase64 = [];
+      for (const file of nuevasFotos) {
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+        nuevasFotosBase64.push(base64);
+      }
+      const ventaData = {
+        clave: document.getElementById('venta-prop-clave').value.trim(),
+        titulo: document.getElementById('venta-prop-titulo').value.trim(),
+        pais: document.getElementById('venta-prop-pais').value.trim(),
+        precio: Number(document.getElementById('venta-prop-precio').value) || 0,
+        moneda: document.getElementById('venta-prop-moneda').value,
+        estatus: document.getElementById('venta-prop-estatus').value,
+        origen: document.getElementById('venta-prop-origen').value,
+        comision: document.getElementById('venta-prop-comision').value.trim(),
+        descripcion: document.getElementById('venta-prop-descripcion').value.trim(),
+        fotos: [...ventaEditPhotos, ...nuevasFotosBase64].slice(0, 10)
+      };
+      if (!ventaData.titulo || !ventaData.pais || !ventaData.precio) {
+        alert("Completa título, país/plaza y precio para guardar la propiedad en venta.");
+        return;
+      }
+      if (window.ventaPropIndex >= 0) {
+        dataCache.propiedadesVenta[window.ventaPropIndex] = ventaData;
+      } else {
+        dataCache.propiedadesVenta.push(ventaData);
+      }
+      await saveToCloud();
+      closeModal('modal-venta-propiedad');
+      renderGaleriaVentas();
+    }
+
+    async function deleteVentaPropiedad(idx) {
+      if (!canManageVentas()) return;
+      const prop = dataCache.propiedadesVenta[idx];
+      if (!prop) return;
+      if (!confirm(`¿Eliminar la propiedad ${prop.clave} (${prop.titulo}) de la galería de ventas?`)) return;
+      dataCache.propiedadesVenta.splice(idx, 1);
+      await saveToCloud();
+      renderGaleriaVentas();
+      renderVentasProspectos();
+    }
+
+    function abrirVisorVenta(idx) {
+      const prop = dataCache.propiedadesVenta[idx];
+      if (!prop || !Array.isArray(prop.fotos) || !prop.fotos.length) return;
+      let fotoActual = 0;
+      const titulo = document.getElementById('visor-venta-titulo');
+      const img = document.getElementById('visor-venta-img');
+      const contador = document.getElementById('visor-venta-contador');
+      function mostrarFoto() {
+        img.src = prop.fotos[fotoActual];
+        titulo.textContent = `${prop.clave} — ${prop.titulo}`;
+        contador.textContent = `Foto ${fotoActual + 1} de ${prop.fotos.length}`;
+      }
+      document.getElementById('visor-venta-prev').onclick = () => {
+        fotoActual = (fotoActual - 1 + prop.fotos.length) % prop.fotos.length;
+        mostrarFoto();
+      };
+      document.getElementById('visor-venta-next').onclick = () => {
+        fotoActual = (fotoActual + 1) % prop.fotos.length;
+        mostrarFoto();
+      };
+      mostrarFoto();
+      openModal('modal-visor-venta');
+    }
+
+    function renderGaleriaVentas() {
+      const grid = document.getElementById('grid-galeria-ventas');
+      if (!grid) return;
+      const filtroMoneda = document.getElementById('filtro-moneda-venta');
+      const monedaSel = filtroMoneda ? filtroMoneda.value : 'TODAS';
+      const lista = (dataCache.propiedadesVenta || []).filter(p => monedaSel === 'TODAS' || (p.moneda || 'MXN') === monedaSel);
+      if (!lista.length) {
+        grid.innerHTML = `<div class="bg-white rounded-2xl border p-6 text-center text-sm text-zinc-500 col-span-full">Aún no hay propiedades en venta. Agrega la primera con el botón "+ Nueva Venta".</div>`;
+        return;
+      }
+      grid.innerHTML = lista.map((p) => {
+        const idxOriginal = dataCache.propiedadesVenta.indexOf(p);
+        const precioFormateado = `${p.moneda === 'USD' ? 'USD' : 'MXN'} $${Number(p.precio || 0).toLocaleString()}`;
+        const portada = Array.isArray(p.fotos) && p.fotos.length ? p.fotos[0] : null;
+        const monedaBadge = p.moneda === 'USD' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800';
+        return `
+          <div class="bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col">
+            <div class="relative">
+              ${portada ? `<img src="${portada}" alt="${p.titulo || 'Propiedad en venta'}" class="w-full h-48 object-cover cursor-pointer" onclick="abrirVisorVenta(${idxOriginal})">` : `<div class="w-full h-48 bg-zinc-100 flex items-center justify-center text-zinc-400 text-sm font-bold">Sin foto</div>`}
+              <span class="absolute top-3 left-3 px-2 py-1 ${monedaBadge} text-xs font-bold rounded-full">${p.moneda || 'MXN'}</span>
+              <span class="absolute top-3 right-3 px-2 py-1 bg-black/70 text-white text-xs font-bold rounded-full">${p.clave || ''}</span>
+            </div>
+            <div class="p-4 flex-1 flex flex-col gap-2">
+              <h3 class="font-extrabold text-zinc-900">${p.titulo || 'Propiedad en venta'}</h3>
+              <p class="text-xs text-zinc-500">${p.pais || ''}</p>
+              <p class="text-lg font-extrabold text-zinc-900">${precioFormateado}</p>
+              <p class="text-xs text-zinc-500 line-clamp-3">${p.descripcion || ''}</p>
+              <p class="text-xs text-zinc-500"><span class="font-bold text-zinc-700">Estatus:</span> ${p.estatus || 'Disponible'}</p>
+              <p class="text-xs text-zinc-500"><span class="font-bold text-zinc-700">Origen:</span> ${p.origen || 'Embajadores'}</p>
+              <p class="text-xs text-zinc-500"><span class="font-bold text-zinc-700">Comisión:</span> ${p.comision ? p.comision + '%' : 'No registrada'}</p>
+              <div class="flex gap-2 pt-2">
+                <button onclick="abrirVisorVenta(${idxOriginal})" class="flex-1 py-2 border rounded-xl text-xs font-bold">Ver fotos</button>
+                ${canManageVentas() ? `
+                <button onclick="abrirModalVentaProp(${idxOriginal})" class="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-xl text-xs font-extrabold">Editar</button>
+                <button onclick="deleteVentaPropiedad(${idxOriginal})" class="flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-extrabold">Eliminar</button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function abrirModalVentaPros(index = -1) {
+      if (!canManageVentas()) return;
+      const selectProp = document.getElementById('venta-pros-inmueble');
+      selectProp.innerHTML = dataCache.propiedadesVenta.map(p => `<option value="${p.clave}">${p.clave} - ${p.titulo} ($${Number(p.precio).toLocaleString()})</option>`).join('') || '<option value="">Sin propiedades disponibles</option>';
+      const titulo = document.getElementById('titulo-modal-venta-prospecto');
+      if (index >= 0) {
+        const pros = dataCache.prospectosVenta[index];
+        titulo.textContent = 'Editar Prospecto de Venta';
+        document.getElementById('venta-pros-nombre').value = pros.nombre || '';
+        document.getElementById('venta-pros-tel').value = pros.tel || '';
+        document.getElementById('venta-pros-email').value = pros.email || '';
+        document.getElementById('venta-pros-inmueble').value = pros.inmueble || '';
+        document.getElementById('venta-pros-presupuesto').value = pros.presupuesto || '';
+        document.getElementById('venta-pros-moneda').value = pros.moneda || 'MXN';
+        document.getElementById('venta-pros-pago').value = pros.forma_pago || 'Contado';
+        document.getElementById('venta-pros-estatus').value = pros.estatus || 'Nuevo';
+        document.getElementById('venta-pros-origen').value = pros.origen_dato || 'Redes Sociales';
+        document.getElementById('venta-pros-comision').value = pros.comision || '';
+        document.getElementById('venta-pros-fecha-seguimiento').value = pros.fecha_proximo_seguimiento || '';
+        document.getElementById('venta-pros-observaciones').value = pros.observaciones_seguimiento || '';
+        window.ventaProsIndex = index;
+      } else {
+        titulo.textContent = 'Nuevo Prospecto de Venta';
+        document.getElementById('venta-pros-nombre').value = '';
+        document.getElementById('venta-pros-tel').value = '';
+        document.getElementById('venta-pros-email').value = '';
+        document.getElementById('venta-pros-presupuesto').value = '';
+        document.getElementById('venta-pros-moneda').value = 'MXN';
+        document.getElementById('venta-pros-pago').value = 'Contado';
+        document.getElementById('venta-pros-estatus').value = 'Nuevo';
+        document.getElementById('venta-pros-origen').value = 'Redes Sociales';
+        document.getElementById('venta-pros-comision').value = '';
+        document.getElementById('venta-pros-fecha-seguimiento').value = '';
+        document.getElementById('venta-pros-observaciones').value = '';
+        window.ventaProsIndex = -1;
+      }
+      openModal('modal-venta-prospecto');
+    }
+
+    async function saveVentaProspecto(e) {
+      e.preventDefault();
+      const prosData = {
+        nombre: document.getElementById('venta-pros-nombre').value.trim(),
+        tel: document.getElementById('venta-pros-tel').value.trim(),
+        email: document.getElementById('venta-pros-email').value.trim(),
+        inmueble: document.getElementById('venta-pros-inmueble').value,
+        presupuesto: document.getElementById('venta-pros-presupuesto').value.trim(),
+        moneda: document.getElementById('venta-pros-moneda').value,
+        forma_pago: document.getElementById('venta-pros-pago').value,
+        estatus: document.getElementById('venta-pros-estatus').value,
+        origen_dato: document.getElementById('venta-pros-origen').value,
+        comision: document.getElementById('venta-pros-comision').value.trim(),
+        fecha_proximo_seguimiento: document.getElementById('venta-pros-fecha-seguimiento').value || '',
+        observaciones_seguimiento: document.getElementById('venta-pros-observaciones').value.trim()
+      };
+      if (window.ventaProsIndex >= 0) {
+        dataCache.prospectosVenta[window.ventaProsIndex] = prosData;
+      } else {
+        dataCache.prospectosVenta.push(prosData);
+      }
+      await saveToCloud();
+      closeModal('modal-venta-prospecto');
+      renderVentasProspectos();
+    }
+
+    async function deleteVentaProspecto(idx) {
+      if (!canManageVentas()) return;
+      const pros = dataCache.prospectosVenta[idx];
+      if (!pros) return;
+      if (!confirm(`¿Eliminar el prospecto ${pros.nombre} del CRM de Ventas?`)) return;
+      dataCache.prospectosVenta.splice(idx, 1);
+      await saveToCloud();
+      renderVentasProspectos();
+    }
+
+    function renderVentasProspectos() {
+      const body = document.getElementById('table-ventas-prospectos');
+      if (!body) return;
+      const lista = dataCache.prospectosVenta || [];
+      if (!lista.length) {
+        body.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-sm text-zinc-500">Sin prospectos de venta registrados. Agrega el primero con el botón "+ Prospecto Venta".</td></tr>`;
+        return;
+      }
+      body.innerHTML = lista.map((pros, idx) => {
+        const ventaProp = dataCache.propiedadesVenta.find(p => p.clave === pros.inmueble);
+        const precioVenta = ventaProp ? Number(ventaProp.precio || 0) : Number(pros.presupuesto || 0);
+        const monedaVenta = ventaProp ? (ventaProp.moneda || 'MXN') : (pros.moneda || 'MXN');
+        const precioFormateado = `${monedaVenta} $${precioVenta.toLocaleString()}`;
+        const comisionNum = Number(pros.comision || (ventaProp ? ventaProp.comision : 0)) || 0;
+        const comisionEstimada = precioVenta * (comisionNum / 100);
+        const comisionFormateada = comisionNum ? `${monedaVenta} $${comisionEstimada.toLocaleString()}` : 'No registrada';
+        const estatusBadge = pros.estatus === 'Cierre' ? 'bg-emerald-100 text-emerald-800' : pros.estatus === 'Descartado' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800';
+        const puedeEditar = canManageVentas();
+        return `
+          <tr class="border-b hover:bg-zinc-50">
+            <td class="p-3 font-bold">${pros.nombre || ''}</td>
+            <td class="p-3">${pros.tel || ''}</td>
+            <td class="p-3">${pros.email || '<span class="text-zinc-400">N/A</span>'}</td>
+            <td class="p-3 font-semibold text-amber-600">${pros.inmueble || ''}</td>
+            <td class="p-3 font-bold text-zinc-800">${precioFormateado}</td>
+            <td class="p-3 font-semibold text-zinc-800">${comisionFormateada}</td>
+            <td class="p-3"><span class="px-2 py-0.5 ${estatusBadge} text-xs font-bold rounded-full">${pros.estatus || ''}</span></td>
+            <td class="p-3 font-semibold text-zinc-700">${pros.fecha_proximo_seguimiento || '<span class="text-zinc-400">Sin fecha</span>'}</td>
+            <td class="p-3 text-xs text-zinc-600 max-w-xs">${pros.observaciones_seguimiento || '<span class="text-zinc-400">Sin observaciones</span>'}</td>
+            <td class="p-3 text-right">
+              ${puedeEditar ? `
+              <button onclick="abrirModalVentaPros(${idx})" class="text-amber-600 hover:text-amber-800 text-xs font-bold px-2 py-1 bg-amber-50 rounded mr-1"><i class="fa-solid fa-pen"></i> Editar</button>
+              <button onclick="deleteVentaProspecto(${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 bg-rose-50 rounded"><i class="fa-solid fa-trash"></i></button>
+              ` : '<span class="text-xs text-zinc-400">Sólo lectura</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // --- RENDERIZADO ---
