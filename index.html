@@ -115,9 +115,11 @@
 
       <!-- DASHBOARD -->
       <section id="sec-dashboard" class="space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Propiedades</p><h3 class="text-3xl font-extrabold text-zinc-900 mt-1" id="dash-total-prop">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Propiedades en Venta</p><h3 class="text-3xl font-extrabold text-zinc-900 mt-1" id="dash-total-ventas-prop">0</h3></div>
           <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Prospectos</p><h3 class="text-3xl font-extrabold text-amber-600 mt-1" id="dash-total-pros">0</h3></div>
+          <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Prospectos de Venta</p><h3 class="text-3xl font-extrabold text-amber-600 mt-1" id="dash-total-ventas-pros">0</h3></div>
           <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Propietarios</p><h3 class="text-3xl font-extrabold text-amber-600 mt-1" id="dash-total-propn">0</h3></div>
           <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Inquilinos</p><h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="dash-total-inq">0</h3></div>
           <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm"><p class="text-xs font-semibold text-zinc-400 uppercase">Personal</p><h3 class="text-3xl font-extrabold text-blue-600 mt-1" id="dash-total-emp">0</h3></div>
@@ -319,8 +321,8 @@
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Clave</label><input type="text" id="prop-clave" readonly class="w-full px-4 py-3 bg-zinc-100 border rounded-xl font-bold text-amber-600"></div>
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Dirección</label><input type="text" id="prop-titulo" required placeholder="Dirección" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Precio Renta (MXN)</label><input type="number" id="prop-precio" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
-          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Cuota Mantenimiento (MXN)</label><input type="number" id="prop-mantenimiento" placeholder="0" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Precio Renta (MXN)</label><input type="number" onwheel="this.blur()" id="prop-precio" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+          <div><label class="block text-xs font-bold text-zinc-500 mb-1">Cuota Mantenimiento (MXN)</label><input type="number" onwheel="this.blur()" id="prop-mantenimiento" placeholder="0" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Forma de Pago del Mantenimiento</label>
@@ -368,7 +370,7 @@
             <option value="Otro">Otro</option>
           </select>
         </div>
-        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Presupuesto Aprox. (MXN)</label><input type="number" id="pros-presupuesto" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Presupuesto Aprox. (MXN)</label><input type="number" onwheel="this.blur()" id="pros-presupuesto" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Estatus del Proceso</label><select id="pros-estatus" class="w-full px-4 py-3 border rounded-xl text-sm bg-white"><option value="Nuevo">Nuevo</option><option value="Contactado">Contactado</option><option value="Cita Agendada">Cita Agendada</option><option value="En Proceso">En Proceso</option><option value="Descartado">Descartado</option></select></div>
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Fecha Próximo Seguimiento</label><input type="date" id="pros-fecha-seguimiento" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Observaciones de Seguimiento (Opcional)</label><textarea id="pros-observaciones" rows="2" placeholder="Ej. Pidió requisitos de renta, confirmar visita..." class="w-full px-4 py-3 border rounded-xl text-sm"></textarea></div>
@@ -461,14 +463,14 @@
           <select id="pago-inmueble" onchange="onPagoInmuebleChange()" required class="w-full px-4 py-3 border rounded-xl text-sm bg-white"></select>
         </div>
         <div><label class="block text-xs font-bold text-zinc-500 mb-1">Concepto</label><input type="text" id="pago-concepto" required placeholder="Renta mes de Noviembre o Liquidación Propietario" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
-        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Monto Total Renta / Operación (MXN)</label><input type="number" id="pago-monto" oninput="calcularNetoPropietario()" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-bold text-zinc-500 mb-1">Monto Total Renta / Operación (MXN)</label><input type="number" onwheel="this.blur()" id="pago-monto" oninput="calcularNetoPropietario()" required placeholder="12000" class="w-full px-4 py-3 border rounded-xl text-sm"></div>
         
         <!-- COMISIÓN Y MANTENIMIENTO -->
         <div id="comision-container" class="hidden space-y-3 p-4 bg-amber-50 rounded-2xl border border-amber-200">
           <p class="text-xs font-bold text-amber-800">Desglose de Administración Zenil Realty</p>
           <div>
             <label class="block text-xs font-bold text-zinc-600 mb-1">Comisión de Administración (%)</label>
-            <input type="number" id="pago-comision-pct" placeholder="10" value="10" oninput="calcularNetoPropietario()" class="w-full px-3 py-2 border rounded-xl text-sm bg-white">
+            <input type="number" onwheel="this.blur()" id="pago-comision-pct" placeholder="10" value="10" oninput="calcularNetoPropietario()" class="w-full px-3 py-2 border rounded-xl text-sm bg-white">
           </div>
           <div id="pago-mantenimiento-info" class="text-xs text-zinc-600 font-medium hidden">
             Cuota Mantenimiento a descontar: <span id="pago-mant-val" class="font-bold text-zinc-900">$0.00 MXN</span> (Incluido en renta)
@@ -573,7 +575,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Precio</label>
-          <input type="number" id="venta-prop-precio" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+          <input type="number" onwheel="this.blur()" id="venta-prop-precio" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Moneda</label>
@@ -604,7 +606,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Comisión % (Opcional)</label>
-          <input type="number" id="venta-prop-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
+          <input type="number" onwheel="this.blur()" id="venta-prop-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
         </div>
       </div>
       <div>
@@ -651,7 +653,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Presupuesto</label>
-          <input type="number" id="venta-pros-presupuesto" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
+          <input type="number" onwheel="this.blur()" id="venta-pros-presupuesto" required placeholder="Ej. 4500000" class="w-full px-4 py-3 border rounded-xl text-sm font-bold">
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Moneda</label>
@@ -693,7 +695,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-500 mb-1">Comisión % (Opcional)</label>
-          <input type="number" id="venta-pros-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
+          <input type="number" onwheel="this.blur()" id="venta-pros-comision" step="0.1" placeholder="Ej. 3" class="w-full px-4 py-3 border rounded-xl text-sm">
         </div>
       </div>
       <div>
@@ -1075,7 +1077,9 @@
 
     function refreshAllViews() {
       document.getElementById('dash-total-prop').innerText = dataCache.propiedades.length;
+      document.getElementById('dash-total-ventas-prop').innerText = (dataCache.propiedadesVenta || []).length;
       document.getElementById('dash-total-pros').innerText = dataCache.prospectos.length;
+      document.getElementById('dash-total-ventas-pros').innerText = (dataCache.prospectosVenta || []).length;
       document.getElementById('dash-total-propn').innerText = dataCache.propietarios.length;
       document.getElementById('dash-total-inq').innerText = dataCache.inquilinos.length;
       document.getElementById('dash-total-emp').innerText = dataCache.empleados.length;
