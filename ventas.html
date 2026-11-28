@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propiedades en Venta y Renta | Zenil Grupo Inmobiliario</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  .gold { color: #D97706; }
+  .bg-gold { background-color: #D97706; }
+  .bg-gold:hover { background-color: #B45309; }
+  .card-img { height: 220px; object-fit: cover; width: 100%; display: block; }
+  .placeholder-img { height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #0A0A0A; color: #fff; }
+  .placeholder-img img { height: 64px; width: auto; background: #fff; border-radius: 10px; padding: 6px 10px; }
+</style>
+</head>
+<body class="bg-zinc-100 text-zinc-900">
+
+<!-- Encabezado -->
+<header class="bg-white shadow-sm sticky top-0 z-20">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+    <img src="./logo-zenilg.png" alt="Zenil Grupo Inmobiliario" class="h-11 w-auto">
+    <div class="leading-tight">
+      <p class="font-extrabold text-lg tracking-tight">Zenil Grupo Inmobiliario</p>
+      <p class="text-xs text-zinc-500">Ventas y rentas en Guadalajara y alrededores</p>
+    </div>
+    <nav class="ml-auto hidden sm:flex items-center gap-5 text-sm font-semibold">
+      <a href="#ventas" class="hover:text-amber-600">En venta</a>
+      <a href="#rentas" class="hover:text-amber-600">En renta</a>
+      <a href="#vender" class="text-amber-600 hover:text-amber-700">Vender o rentar</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="bg-[#0A0A0A] text-white">
+  <div class="max-w-6xl mx-auto px-4 py-10 sm:py-14">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Propiedades en Venta y Renta</h1>
+    <p class="mt-3 text-zinc-300 max-w-2xl">Lo que ves aquí es el inventario real de Zenil, actualizado al momento desde nuestro sistema. Si algo te interesa, escríbenos y te lo confirmamos.</p>
+    <p id="actualizado" class="mt-4 text-xs text-zinc-500"></p>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-4 py-8 space-y-14">
+
+  <!-- Estado general -->
+  <div id="estado" class="hidden rounded-xl border border-amber-300 bg-amber-50 text-amber-800 px-4 py-3 text-sm"></div>
+
+  <!-- En venta -->
+  <section id="ventas">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 class="text-2xl font-extrabold tracking-tight">En venta</h2>
+        <p class="text-sm text-zinc-500">Desarrollos y propiedades en venta. Precios de referencia.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <select id="filtro-plaza" class="px-3 py-2 border rounded-xl text-sm bg-white font-semibold">
+          <option value="">Todas las plazas</option>
+        </select>
+        <select id="filtro-estatus" class="px-3 py-2 border rounded-xl text-sm bg-white font-semibold">
+          <option value="">Todos los estatus</option>
+        </select>
+      </div>
+    </div>
+    <div id="lista-ventas" class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <p class="text-sm text-zinc-500 col-span-full">Cargando propiedades en venta…</p>
+    </div>
+  </section>
+
+  <!-- En renta -->
+  <section id="rentas">
+    <h2 class="text-2xl font-extrabold tracking-tight">En renta</h2>
+    <p class="text-sm text-zinc-500">Casas disponibles para rentar. Precio mensual.</p>
+    <div id="lista-rentas" class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <p class="text-sm text-zinc-500 col-span-full">Cargando propiedades en renta…</p>
+    </div>
+  </section>
+
+  <!-- Formulario propietarios -->
+  <section id="vender" class="bg-white rounded-2xl shadow-sm border p-5 sm:p-8">
+    <h2 class="text-2xl font-extrabold tracking-tight">¿Quieres vender o rentar tu propiedad?</h2>
+    <p class="mt-2 text-sm text-zinc-600">Déjanos tus datos y el equipo de Zenil te contacta para ayudarte a venderla o rentarla.</p>
+    <div class="mt-5">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScD6gdX2SoaCVRAMLXQcaxKh5WYAGyeyamxztsGEeKgXgV04g/viewform?embedded=true" width="100%" height="1150" frameborder="0" marginheight="0" marginwidth="0" loading="lazy" title="Formulario para vender o rentar tu propiedad">Cargando formulario…</iframe>
+      <p class="mt-3 text-sm text-zinc-500">Si el formulario no carga, ábrelo aquí: <a class="text-amber-600 font-semibold underline" href="https://docs.google.com/forms/d/e/1FAIpQLScD6gdX2SoaCVRAMLXQcaxKh5WYAGyeyamxztsGEeKgXgV04g/viewform" target="_blank" rel="noopener">Formulario para vender o rentar tu propiedad</a></p>
+    </div>
+  </section>
+</main>
+
+<!-- Pie -->
+<footer class="bg-[#0A0A0A] text-zinc-300">
+  <div class="max-w-6xl mx-auto px-4 py-10 grid sm:grid-cols-3 gap-8 text-sm">
+    <div>
+      <p class="text-white font-extrabold text-base">Zenil Grupo Inmobiliario</p>
+      <p class="mt-2">Av. Conchitas 4629 local 16/16A, Tlaquepaque, Jalisco, 45607</p>
+      <p class="mt-1"><a class="hover:text-amber-500" href="https://www.zenilgrupo.com" target="_blank" rel="noopener">www.zenilgrupo.com</a></p>
+    </div>
+    <div>
+      <p class="text-white font-bold">Contacto</p>
+      <p class="mt-2"><i class="fa-solid fa-phone mr-2 gold"></i>Zenil Grupo: 33 4917 3689</p>
+      <p class="mt-1"><i class="fa-solid fa-envelope mr-2 gold"></i><a class="hover:text-amber-500" href="mailto:ventas@zenilgrupo.com">ventas@zenilgrupo.com</a></p>
+      <p class="mt-1"><i class="fa-solid fa-envelope mr-2 gold"></i><a class="hover:text-amber-500" href="mailto:info@zenilgrupo.com">info@zenilgrupo.com</a></p>
+    </div>
+    <div>
+      <p class="text-white font-bold">Aviso</p>
+      <p class="mt-2">Precios de referencia, sujetos a cambio sin previo aviso. La disponibilidad y el precio final se confirman con Zenil antes de apartar.</p>
+    </div>
+  </div>
+  <div class="border-t border-zinc-800">
+    <p class="max-w-6xl mx-auto px-4 py-4 text-xs text-zinc-500">© Zenil Grupo Inmobiliario. Página ligada al inventario de Zenil: lo que se carga en el sistema aparece aquí automáticamente.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var SUPABASE_URL = 'https://molaczplmyhdiacjtzwf.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_wltRRhvR1fBnW039WqOpwA_IhXBvvdp';
+  var EMAIL = 'ventas@zenilgrupo.com';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function fmtPrecio(v, moneda) {
+    var n = Number(v);
+    if (!n) return 'Precio a consultar';
+    return '$' + n.toLocaleString('es-MX') + (moneda ? ' ' + moneda : ' MXN');
+  }
+
+  function badgeClass(estatus) {
+    var e = (estatus || '').toLowerCase();
+    if (e === 'disponible') return 'bg-emerald-600';
+    if (e === 'apartado' || e === 'apartada') return 'bg-amber-600';
+    return 'bg-zinc-600';
+  }
+
+  function fotoHtml(fotos, titulo) {
+    var url = (fotos && fotos.length && fotos[0]) ? fotos[0] : '';
+    if (url) return '<img class="card-img" src="' + esc(url) + '" alt="' + esc(titulo) + '" loading="lazy">';
+    return '<div class="placeholder-img"><img src="./logo-zenilg.png" alt="Zenil Grupo Inmobiliario"><span class="text-xs font-semibold tracking-wide text-zinc-300">Foto próximamente</span></div>';
+  }
+
+  function mailtoLink(asunto) {
+    return 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(asunto);
+  }
+
+  function tarjetaVenta(v) {
+    return '<article class="bg-white rounded-2xl shadow-sm border overflow-hidden flex flex-col">' +
+      fotoHtml(v.fotos, v.titulo) +
+      '<div class="p-5 flex flex-col gap-2 grow">' +
+        '<div class="flex items-center gap-2"><span class="text-xs font-bold text-white px-2 py-1 rounded-full ' + badgeClass(v.estatus) + '">' + esc(v.estatus || 'Disponible') + '</span>' +
+        (v.clave ? '<span class="text-xs font-bold text-amber-600">' + esc(v.clave) + '</span>' : '') + '</div>' +
+        '<h3 class="font-extrabold text-lg leading-snug">' + esc(v.titulo || 'Propiedad en venta') + '</h3>' +
+        (v.pais ? '<p class="text-sm text-zinc-500"><i class="fa-solid fa-location-dot mr-1 gold"></i>' + esc(v.pais) + '</p>' : '') +
+        '<p class="text-xl font-extrabold">Desde ' + esc(fmtPrecio(v.precio, v.moneda)) + '</p>' +
+        (v.descripcion ? '<p class="text-sm text-zinc-600">' + esc(v.descripcion) + '</p>' : '') +
+        '<a href="' + mailtoLink('Me interesa ' + (v.titulo || '')) + '" class="mt-auto pt-3"><span class="inline-block w-full text-center text-white font-bold px-4 py-2.5 rounded-xl bg-gold">Me interesa</span></a>' +
+      '</div></article>';
+  }
+
+  function tarjetaRenta(r) {
+    return '<article class="bg-white rounded-2xl shadow-sm border overflow-hidden flex flex-col">' +
+      fotoHtml(r.fotos, r.titulo) +
+      '<div class="p-5 flex flex-col gap-2 grow">' +
+        '<div class="flex items-center gap-2"><span class="text-xs font-bold text-white px-2 py-1 rounded-full ' + badgeClass(r.estatus) + '">' + esc(r.estatus || 'Disponible') + '</span>' +
+        (r.clave ? '<span class="text-xs font-bold text-amber-600">' + esc(r.clave) + '</span>' : '') + '</div>' +
+        '<h3 class="font-extrabold text-lg leading-snug">' + esc(r.titulo || 'Casa en renta') + '</h3>' +
+        '<p class="text-xl font-extrabold">' + esc(fmtPrecio(r.precio, 'MXN')) + ' <span class="text-sm font-semibold text-zinc-500">/mes</span></p>' +
+        '<a href="' + mailtoLink('Me interesa rentar ' + (r.titulo || '')) + '" class="mt-auto pt-3"><span class="inline-block w-full text-center text-white font-bold px-4 py-2.5 rounded-xl bg-gold">Me interesa</span></a>' +
+      '</div></article>';
+  }
+
+  var ventasTodas = [];
+  var plazaSel = document.getElementById('filtro-plaza');
+  var estatusSel = document.getElementById('filtro-estatus');
+
+  function renderVentas() {
+    var plaza = plazaSel.value;
+    var estatus = estatusSel.value;
+    var lista = ventasTodas.filter(function (v) {
+      if (plaza && v.pais !== plaza) return false;
+      if (estatus && v.estatus !== estatus) return false;
+      return true;
+    });
+    var cont = document.getElementById('lista-ventas');
+    if (!lista.length) {
+      cont.innerHTML = '<p class="text-sm text-zinc-500 col-span-full">No hay propiedades en venta con esos filtros por el momento.</p>';
+      return;
+    }
+    cont.innerHTML = lista.map(tarjetaVenta).join('');
+  }
+
+  function llenarFiltros() {
+    var plazas = [], estatus = [];
+    ventasTodas.forEach(function (v) {
+      if (v.pais && plazas.indexOf(v.pais) === -1) plazas.push(v.pais);
+      if (v.estatus && estatus.indexOf(v.estatus) === -1) estatus.push(v.estatus);
+    });
+    plazas.sort();
+    estatus.sort();
+    plazaSel.innerHTML = '<option value="">Todas las plazas</option>' + plazas.map(function (p) { return '<option value="' + esc(p) + '">' + esc(p) + '</option>'; }).join('');
+    estatusSel.innerHTML = '<option value="">Todos los estatus</option>' + estatus.map(function (e) { return '<option value="' + esc(e) + '"' + (e === 'Disponible' ? ' selected' : '') + '>' + esc(e) + '</option>'; }).join('');
+    estatusSel.value = estatus.indexOf('Disponible') !== -1 ? 'Disponible' : '';
+  }
+
+  function mostrarEstado(msg, isError) {
+    var el = document.getElementById('estado');
+    el.textContent = msg;
+    el.className = isError
+      ? 'rounded-xl border border-red-300 bg-red-50 text-red-800 px-4 py-3 text-sm'
+      : 'rounded-xl border border-amber-300 bg-amber-50 text-amber-800 px-4 py-3 text-sm';
+    el.classList.remove('hidden');
+  }
+
+  async function fetchPayload() {
+    var headers = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+    // 1) Solo las dos listas públicas (ventas y rentas). Nunca se piden ni se leen los prospectos.
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/zenil_store?select=payload-%3EpropiedadesVenta,payload-%3Epropiedades&id=eq.1', { headers: headers });
+      if (res.ok) {
+        var rows = await res.json();
+        var row = rows && rows[0];
+        if (row) {
+          var ventas = row.propiedadesVenta || (row.payload && row.payload.propiedadesVenta) || [];
+          var rentas = row.propiedades || (row.payload && row.payload.propiedades) || [];
+          if (ventas.length || rentas.length) return { ventas: ventas, rentas: rentas };
+        }
+      }
+    } catch (e) { /* cae al respaldo */ }
+    // 2) Respaldo: payload completo, pero solo se leen las dos listas públicas.
+    var res2 = await fetch(SUPABASE_URL + '/rest/v1/zenil_store?select=payload&id=eq.1', { headers: headers });
+    if (!res2.ok) throw new Error('No se pudo cargar el inventario (HTTP ' + res2.status + ')');
+    var rows2 = await res2.json();
+    var payload = (rows2 && rows2[0] && rows2[0].payload) || {};
+    return { ventas: payload.propiedadesVenta || [], rentas: payload.propiedades || [] };
+  }
+
+  async function init() {
+    try {
+      var data = await fetchPayload();
+      // ZV-001 es la propiedad de prueba; se oculta hasta eliminarla del CRM.
+      ventasTodas = (data.ventas || []).filter(function (v) { return v && v.clave !== 'ZV-001'; });
+      var rentas = (data.rentas || []).filter(function (r) { return r && r.estatus === 'Disponible'; });
+      llenarFiltros();
+      renderVentas();
+      var contR = document.getElementById('lista-rentas');
+      contR.innerHTML = rentas.length
+        ? rentas.map(tarjetaRenta).join('')
+        : '<p class="text-sm text-zinc-500 col-span-full">No hay casas disponibles para rentar por el momento.</p>';
+      var ahora = new Date();
+      document.getElementById('actualizado').textContent = 'Actualizado: ' + ahora.toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      if (!ventasTodas.length && !rentas.length) mostrarEstado('El inventario está vacío por el momento. Vuelve pronto.', false);
+    } catch (err) {
+      document.getElementById('lista-ventas').innerHTML = '<p class="text-sm text-red-700 col-span-full">No se pudo cargar el inventario. Revisa tu conexión e inténtalo de nuevo.</p>';
+      document.getElementById('lista-rentas').innerHTML = '<p class="text-sm text-red-700 col-span-full">No se pudo cargar el inventario. Revisa tu conexión e inténtalo de nuevo.</p>';
+      mostrarEstado('No se pudo cargar el inventario en este momento. Inténtalo de nuevo más tarde.', true);
+    }
+  }
+
+  plazaSel.addEventListener('change', renderVentas);
+  estatusSel.addEventListener('change', renderVentas);
+  init();
+})();
+</script>
+</body>
+</html>
