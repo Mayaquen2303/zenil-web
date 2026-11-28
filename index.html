@@ -1684,6 +1684,7 @@
       await saveToCloud();
       closeModal('modal-venta-propiedad');
       renderGaleriaVentas();
+      refreshAllViews();
     }
 
     async function deleteVentaPropiedad(idx) {
@@ -1695,6 +1696,7 @@
       await saveToCloud();
       renderGaleriaVentas();
       renderVentasProspectos();
+      refreshAllViews();
     }
 
     function abrirVisorVenta(idx) {
@@ -1827,6 +1829,7 @@
       await saveToCloud();
       closeModal('modal-venta-prospecto');
       renderVentasProspectos();
+      refreshAllViews();
     }
 
     async function deleteVentaProspecto(idx) {
@@ -1837,6 +1840,7 @@
       dataCache.prospectosVenta.splice(idx, 1);
       await saveToCloud();
       renderVentasProspectos();
+      refreshAllViews();
     }
 
     function renderVentasProspectos() {
